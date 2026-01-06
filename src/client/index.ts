@@ -16,6 +16,7 @@ export * from './components/forms'
 
 // Utility components
 export { UserProfile, type UserProfileProps } from './components/UserProfile'
+export { SignOutButton, type SignOutButtonProps } from './components/SignOutButton'
 
 // Re-export shared types for convenience
 export type {
