@@ -1,9 +1,11 @@
+// packages/convex-better-auth/src/client/components/base/FormField.tsx
+
 /**
  * Standardized form field component
  * Combines label, input, and error display
  */
 
-import { forwardRef, type InputHTMLAttributes } from 'react'
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
 import { Label, Input } from '@tanstack-app/ui'
 
 export interface FormFieldProps
@@ -16,6 +18,9 @@ export interface FormFieldProps
 
   /** Helper text to display below input */
   helperText?: string
+
+  /** Additional component to render next to the label (e.g., button) */
+  labelAction?: ReactNode
 }
 
 /**
@@ -30,14 +35,26 @@ export interface FormFieldProps
  *   {...register('email')}
  * />
  * ```
+ *
+ * @example With label action
+ * ```tsx
+ * <FormField
+ *   label="Password"
+ *   labelAction={<Button variant="link">Forgot password?</Button>}
+ *   {...register('password')}
+ * />
+ * ```
  */
 export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
-  ({ label, error, helperText, id, size: _size, ...props }, ref) => {
+  ({ label, error, helperText, labelAction, id, size: _size, ...props }, ref) => {
     const fieldId = id || label.toLowerCase().replace(/\s+/g, '-')
 
     return (
       <div className="space-y-2">
-        <Label htmlFor={fieldId}>{label}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor={fieldId}>{label}</Label>
+          {labelAction && <div>{labelAction}</div>}
+        </div>
         <Input id={fieldId} ref={ref} aria-invalid={!!error} {...props} />
         {error && (
           <p className="text-xs text-red-600" role="alert">

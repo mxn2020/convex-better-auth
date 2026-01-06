@@ -109,12 +109,12 @@ export default function SignInForm() {
         selectedMethod === 'password'
           ? handlePasswordSignIn
           : (e) => {
-              e.preventDefault()
-              if (otp.otpSent) {
-                const code = (e.target as HTMLFormElement).otp?.value
-                if (code) handleOTPVerify(code)
-              }
+            e.preventDefault()
+            if (otp.otpSent) {
+              const code = (e.target as HTMLFormElement).otp?.value
+              if (code) handleOTPVerify(code)
             }
+          }
       }
       className="grid gap-4"
     >
@@ -130,14 +130,16 @@ export default function SignInForm() {
 
       {/* Password Field */}
       {selectedMethod === 'password' && (
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium leading-none"
-            >
-              Password
-            </label>
+        <FormField
+          id="password"
+          label="Password"
+          type="password"
+          placeholder="password"
+          autoComplete="password"
+          disabled={isLoading}
+          {...form.register('password')}
+          error={form.formState.errors.password?.message}
+          labelAction={
             <Button
               variant="link"
               size="sm"
@@ -151,18 +153,8 @@ export default function SignInForm() {
               )}
               Forgot your password?
             </Button>
-          </div>
-          <FormField
-            id="password"
-            label="Password"
-            type="password"
-            placeholder="password"
-            autoComplete="password"
-            disabled={isLoading}
-            {...form.register('password')}
-            error={form.formState.errors.password?.message}
-          />
-        </div>
+          }
+        />
       )}
 
       {/* OTP Input */}
