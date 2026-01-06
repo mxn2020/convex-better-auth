@@ -51,10 +51,14 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
 
     return (
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        {labelAction ? (
+          <div className="flex items-center justify-between">
+            <Label htmlFor={fieldId}>{label}</Label>
+            {labelAction}
+          </div>
+        ) : (
           <Label htmlFor={fieldId}>{label}</Label>
-          {labelAction && <div>{labelAction}</div>}
-        </div>
+        )}
         <Input id={fieldId} ref={ref} aria-invalid={!!error} {...props} />
         {error && (
           <p className="text-xs text-red-600" role="alert">
