@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { authClient } from '../../auth-client'
 import { useAuthConfig } from '../utils/useAuthConfig'
@@ -46,6 +46,7 @@ export interface UseSignInOptions {
  */
 export function useSignIn(options: UseSignInOptions = {}) {
   const navigate = useNavigate()
+  const router = useRouter()
   const { config } = useAuthConfig()
   const { handleError } = useAuthError()
 
@@ -83,10 +84,14 @@ export function useSignIn(options: UseSignInOptions = {}) {
 
                 toast.success(successMessage)
 
-                // Reload page for Convex to pick up auth state
-                // Router will handle redirect based on new auth state
+                // Navigate using router (same as old working code)
                 if (!options.disableAutoNavigate) {
-                  window.location.reload()
+                  const redirectPath =
+                    options.redirectTo ||
+                    config.navigation?.afterSignIn ||
+                    '/'
+
+                  router.navigate({ to: redirectPath })
                 }
               }
 
