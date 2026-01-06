@@ -18,6 +18,9 @@ export * from './components/forms'
 export { UserProfile, type UserProfileProps } from './components/UserProfile'
 export { SignOutButton, type SignOutButtonProps } from './components/SignOutButton'
 
+// Providers
+export { AuthConfigProvider, type AuthConfigProviderProps } from './providers/AuthConfigProvider'
+
 // Re-export shared types for convenience
 export type {
   PasswordRequirements,
