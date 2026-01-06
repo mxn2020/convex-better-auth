@@ -73,7 +73,6 @@ export function SignUp() {
           Already have an account?{' '}
           <Link
             to="/sign-in"
-            search={{}}
             className="text-orange-400 hover:text-orange-500 dark:text-orange-300 dark:hover:text-orange-200 underline"
           >
             Sign in
