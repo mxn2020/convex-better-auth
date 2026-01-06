@@ -1,6 +1,6 @@
 /**
- * Configuration interface for Convex Better Auth package
- * Allows customization of authentication behavior, email settings, password requirements, and more.
+ * Shared configuration types and utilities for Convex Better Auth
+ * These can be used on both client (TanStack Start) and server (Convex) sides
  */
 
 export interface PasswordRequirements {

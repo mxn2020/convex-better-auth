@@ -1,6 +1,6 @@
 # Convex Better Auth Package
 
-A reusable, fully-featured authentication package combining [Better Auth](https://better-auth.com) with [Convex](https://convex.dev). This package provides email & password authentication, social OAuth, 2FA, magic links, email OTP, and more - all configured through a simple, type-safe interface.
+A production-ready authentication package combining [Better Auth](https://better-auth.com) with [Convex](https://convex.dev), designed as a reusable git submodule for your projects.
 
 ## Features
 
@@ -15,32 +15,62 @@ A reusable, fully-featured authentication package combining [Better Auth](https:
 ✅ **Anonymous Sign-in**
 ✅ **Account Deletion**
 ✅ **React UI Components** (shadcn/ui based)
-✅ **Email Templates** (React Email)
 ✅ **Full TypeScript Support**
+
+## Architecture Overview
+
+This package follows a **client + shared** architecture:
+
+- **Client Components** (`/src/client/`) - Importable React components for your app
+- **Shared Config/Types** (`/src/shared/`) - Configuration interfaces, constants, and types to copy to your Convex backend
+- **Base Components** (`/src/client/components/base/`) - Reusable UI primitives (PasswordInput, SocialButtons, etc.)
+- **Form Components** (`/src/client/components/forms/`) - Complete auth flows (SignIn, SignUp, Settings, etc.)
+
+**Server-side code** must live in your Convex backend (`/convex/`) because it requires Convex context and database access.
 
 ## Installation
 
-This package is designed to work as a workspace package. It's already set up in your monorepo at `packages/convex-better-auth`.
+This package is designed to work as a git submodule in your monorepo.
 
-## Quick Start
+### Add as Git Submodule
 
-### 1. Server Setup (Convex Backend)
+```bash
+# In your project root
+git submodule add <repo-url> packages/convex-better-auth
+git submodule update --init --recursive
+```
 
-In your `/convex/auth.ts`:
+## Setup Guide
+
+### Step 1: Copy Shared Files to Convex Backend
+
+Copy the configuration files from the submodule to your Convex backend:
+
+```bash
+# Create auth directory
+mkdir -p convex/auth
+
+# Copy shared files
+cp packages/convex-better-auth/src/shared/config.ts convex/auth/
+cp packages/convex-better-auth/src/shared/constants.ts convex/auth/
+cp packages/convex-better-auth/src/shared/types.ts convex/auth/
+```
+
+### Step 2: Configure Your Auth in Convex Backend
+
+Update `/convex/auth.ts` to use the config:
 
 ```typescript
+import { type ConvexBetterAuthConfig, mergeConfig } from './auth/config'
 import {
-  createAuthComponent,
-  createAuth,
-  createAuthQueries,
-  betterAuthSchema,
-  type ConvexBetterAuthConfig,
-} from '@convex-better-auth/package/server'
-import { components, internal } from './_generated/api'
-import authConfig from './auth.config'
+  EMAIL_SUBJECT_VERIFICATION,
+  EMAIL_SUBJECT_PASSWORD_RESET,
+  EMAIL_SUBJECT_MAGIC_LINK,
+  EMAIL_SUBJECT_OTP,
+} from './auth/constants'
 
-// Configure your authentication
-const authPackageConfig: ConvexBetterAuthConfig = {
+// Define your auth configuration
+const betterAuthConfig: ConvexBetterAuthConfig = {
   email: {
     from: 'Your App <noreply@example.com>',
   },
@@ -53,14 +83,18 @@ const authPackageConfig: ConvexBetterAuthConfig = {
     requireSpecialChars: false,
   },
   emailVerification: {
-    required: true, // Users must verify email before signing in
+    required: false,
     resendEnabled: true,
     resendCooldownSeconds: 60,
   },
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
   site: {
@@ -68,59 +102,157 @@ const authPackageConfig: ConvexBetterAuthConfig = {
   },
   branding: {
     name: 'Your App',
-    tagline: 'Secure authentication',
-  },
-  hooks: {
-    onCreate: async (ctx, authUser) => {
-      // Sync to your custom users table
-      const userId = await ctx.db.insert('users', {
-        email: authUser.email,
-      })
-      await authComponent.setUserId(ctx, authUser._id, userId)
-    },
+    tagline: 'Simple, secure authentication',
   },
 }
 
-// Create auth component
-export const authComponent = createAuthComponent(
-  components,
-  internal,
-  authConfig,
-  authPackageConfig,
-  betterAuthSchema
-)
+const config = mergeConfig(betterAuthConfig)
 
-// Create auth instance factory
-export const createAuthInstance = (ctx) =>
-  createAuth(ctx, authComponent, authPackageConfig, authConfig, components)
-
-// Export queries
-const queries = createAuthQueries(authComponent)
-export const { safeGetUser, getUser } = queries
+// Use config in createAuthOptions
+export const createAuthOptions = (ctx: GenericCtx<DataModel>) => ({
+  baseURL: config.site.url,
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: config.emailVerification.required,
+    minPasswordLength: config.password.minLength,
+    maxPasswordLength: config.password.maxLength,
+  },
+  // ... rest of your auth options
+})
 ```
 
-### 2. Client Setup (React App)
+### Step 3: Import Client Components
 
-In your `/src/lib/auth-client.tsx`:
+In your React app, import components from the package:
 
 ```typescript
-export { authClient } from '@convex-better-auth/package/client'
+// Import form components
+import { SignIn, SignUp, Settings, ChangePassword } from '@convex-better-auth/package/client'
+
+// Or import from specific paths
+import { SignIn } from '@convex-better-auth/package/client/forms'
+import { PasswordInput, SocialButtons } from '@convex-better-auth/package/client/base'
+
+// Import auth client
+import { authClient } from '@convex-better-auth/package/client'
 ```
 
-### 3. Use Components
+## Component Usage
 
-In your routes:
+### Base Components (Reusable Primitives)
+
+Base components are low-level, reusable UI elements:
+
+#### PasswordInput
 
 ```typescript
-import { SignIn, SignUp, ResetPassword, Settings } from '@convex-better-auth/package/client'
+import { PasswordInput } from '@convex-better-auth/package/client/base'
 
-// Use them directly
+<PasswordInput
+  id="password"
+  label="Password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  placeholder="Enter password"
+  required
+/>
+```
+
+#### SocialButtons
+
+```typescript
+import { SocialButtons } from '@convex-better-auth/package/client/base'
+
+<SocialButtons
+  onGithubClick={handleGithubSignIn}
+  onGoogleClick={handleGoogleSignIn}
+  disabled={loading}
+/>
+```
+
+#### OTPInput
+
+```typescript
+import { OTPInput } from '@convex-better-auth/package/client/base'
+
+<OTPInput
+  id="otp"
+  label="Verification Code"
+  value={otp}
+  onChange={(e) => setOtp(e.target.value)}
+  maxLength={6}
+/>
+```
+
+### Form Components (Complete Flows)
+
+Form components are complete, ready-to-use authentication flows:
+
+#### SignIn
+
+Multi-method sign-in with email/password, magic link, OTP, social, and anonymous options:
+
+```typescript
+import { SignIn } from '@convex-better-auth/package/client'
+
 export default function SignInPage() {
   return <SignIn />
 }
 ```
 
-## Configuration
+#### SignUp
+
+User registration with email verification support:
+
+```typescript
+import { SignUp } from '@convex-better-auth/package/client'
+
+export default function SignUpPage() {
+  return <SignUp />
+}
+```
+
+#### Settings
+
+Comprehensive account settings page:
+
+```typescript
+import { Settings } from '@convex-better-auth/package/client'
+
+export default function SettingsPage() {
+  return (
+    <Settings
+      passwordRequirements={{
+        minLength: 10,
+        maxLength: 128,
+        requireUppercase: true,
+        requireNumbers: true,
+      }}
+      showChangePassword={true}
+      showEmailVerification={true}
+      showTwoFactor={true}
+      showAccountDeletion={true}
+    />
+  )
+}
+```
+
+#### ChangePassword
+
+```typescript
+import { ChangePassword } from '@convex-better-auth/package/client'
+
+<ChangePassword
+  passwordRequirements={{
+    minLength: 10,
+    requireUppercase: true,
+  }}
+  showRevokeSessionsOption={true}
+  onSuccess={() => console.log('Password changed!')}
+/>
+```
+
+## Configuration Reference
 
 ### Password Requirements
 
@@ -160,118 +292,12 @@ socialProviders: {
 }
 ```
 
-### Lifecycle Hooks
-
-```typescript
-hooks: {
-  onCreate: async (ctx, authUser) => {
-    // Called when a new user is created
-    // Sync to your custom tables
-  },
-  onUpdate: async (ctx, newUser, oldUser) => {
-    // Called when a user is updated
-  },
-  onDelete: async (ctx, authUser) => {
-    // Called when a user is deleted
-    // Clean up related data
-  },
-}
-```
-
-## Components
-
-### SignIn
-
-Email/password, magic link, OTP, social, and anonymous sign-in.
-
-```typescript
-import { SignIn } from '@convex-better-auth/package/client'
-
-export default function SignInPage() {
-  return <SignIn />
-}
-```
-
-### SignUp
-
-User registration with email verification support.
-
-```typescript
-import { SignUp } from '@convex-better-auth/package/client'
-
-export default function SignUpPage() {
-  return <SignUp />
-}
-```
-
-### Settings
-
-Comprehensive account settings page with:
-- Email verification status
-- Resend verification email
-- Change password
-- 2FA management
-- Account deletion
-
-```typescript
-import { Settings } from '@convex-better-auth/package/client'
-
-export default function SettingsPage() {
-  return (
-    <Settings
-      passwordRequirements={authPackageConfig.password}
-      showChangePassword={true}
-      showEmailVerification={true}
-      showTwoFactor={true}
-      showAccountDeletion={true}
-    />
-  )
-}
-```
-
-### ChangePassword
-
-Standalone password change component.
-
-```typescript
-import { ChangePassword } from '@convex-better-auth/package/client'
-
-export default function ChangePasswordPage() {
-  return (
-    <ChangePassword
-      passwordRequirements={authPackageConfig.password}
-      showRevokeSessionsOption={true}
-      onSuccess={() => console.log('Password changed!')}
-    />
-  )
-}
-```
-
-### ResendVerification
-
-Button to resend verification email with cooldown timer.
-
-```typescript
-import { ResendVerification } from '@convex-better-auth/package/client'
-
-export default function VerifyEmailPage() {
-  const user = useUser() // Your user hook
-
-  return (
-    <div>
-      <p>Please verify your email</p>
-      <ResendVerification email={user.email} />
-    </div>
-  )
-}
-```
-
 ## Auth Client API
 
 The `authClient` provides all Better Auth methods:
 
 ```typescript
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@convex-better-auth/package/client'
 
 // Sign up
 await authClient.signUp.email({
@@ -296,46 +322,9 @@ await authClient.changePassword({
   revokeOtherSessions: true,
 })
 
-// Send verification email
-await authClient.sendVerificationEmail({
-  email: 'user@example.com',
-})
-
 // Get session
 const { data: session } = authClient.useSession()
 ```
-
-## Queries
-
-Server-side query utilities:
-
-```typescript
-import { safeGetUser, getUser, hasPassword, isEmailVerified } from '~/convex/auth'
-
-// In a Convex query
-export const myQuery = query({
-  handler: async (ctx) => {
-    const user = await getUser(ctx) // Throws if not authenticated
-    const userOrNull = await safeGetUser(ctx) // Returns null if not authenticated
-
-    const hasPassword = await queries.hasPassword(ctx, createAuthInstance)
-    const verified = await queries.isEmailVerified(ctx)
-
-    return { user, hasPassword, verified }
-  },
-})
-```
-
-## Email Templates
-
-Customize email templates in `/packages/convex-better-auth/src/server/emails/`:
-
-- `verifyEmail.tsx` - Email verification
-- `resetPassword.tsx` - Password reset
-- `magicLink.tsx` - Magic link sign-in
-- `verifyOTP.tsx` - OTP codes
-
-All templates use React Email and support branding configuration.
 
 ## Environment Variables
 
@@ -345,6 +334,7 @@ Required:
 SITE_URL=http://localhost:3000
 BETTER_AUTH_SECRET=your-secret-key
 RESEND_API_KEY=your-resend-api-key
+EMAIL_FROM=Your App <noreply@example.com>
 ```
 
 Optional (for social auth):
@@ -356,7 +346,7 @@ GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 ```
 
-## TypeScript
+## TypeScript Support
 
 Full TypeScript support with exported types:
 
@@ -370,20 +360,9 @@ import type {
 } from '@convex-better-auth/package'
 ```
 
-## Git Submodule (Optional)
+## Updating the Submodule
 
-To use this package as a git submodule:
-
-1. Create a separate repository for the package
-2. Push the package code
-3. In your main project:
-
-```bash
-git rm -r packages/convex-better-auth
-git submodule add <repo-url> packages/convex-better-auth
-```
-
-4. To update:
+To get the latest updates:
 
 ```bash
 cd packages/convex-better-auth
@@ -391,6 +370,26 @@ git pull origin main
 cd ../..
 git add packages/convex-better-auth
 git commit -m "Update auth package"
+```
+
+## Package Structure
+
+```
+convex-better-auth/
+├── src/
+│   ├── client/              # Importable React components
+│   │   ├── components/
+│   │   │   ├── base/       # Reusable UI primitives
+│   │   │   └── forms/      # Complete auth flows
+│   │   ├── auth-client.ts  # Better Auth client instance
+│   │   └── index.ts
+│   ├── shared/              # Copy to your convex backend
+│   │   ├── config.ts       # Configuration interfaces
+│   │   ├── constants.ts    # Shared constants
+│   │   └── types.ts        # Type definitions
+│   └── index.ts             # Main exports
+├── package.json
+└── README.md
 ```
 
 ## License

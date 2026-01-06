@@ -1,3 +1,5 @@
+// packages/convex-better-auth/src/client/index.ts
+
 /**
  * Client-side exports for Convex Better Auth package
  * Use these in your React application (src/ directory)
@@ -6,19 +8,14 @@
 // Auth client
 export { authClient, type AuthClient } from './auth-client'
 
-// UI Components
-export { default as SignIn } from './components/SignIn'
-export { default as SignUp } from './components/SignUp'
-export { default as ResetPassword } from './components/ResetPassword'
-export { default as EnableTwoFactor } from './components/EnableTwoFactor'
-export { default as Settings } from './components/Settings'
-export { ChangePassword } from './components/ChangePassword'
-export { ResendVerification, ResendVerificationLink } from './components/ResendVerification'
+// Base components (reusable primitives)
+export * from './components/base'
 
-// Component prop types
-export type { ChangePasswordProps } from './components/ChangePassword'
-export type { ResendVerificationProps } from './components/ResendVerification'
-export type { SettingsPageProps } from './components/Settings'
+// Form components (complete auth flows)
+export * from './components/forms'
+
+// Utility components
+export { UserProfile, type UserProfileProps } from './components/UserProfile'
 
 // Re-export shared types for convenience
 export type {

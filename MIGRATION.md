@@ -1,308 +1,321 @@
 # Migration Guide
 
-This guide helps you migrate an existing Convex + Better Auth project to use this reusable package.
+This guide helps you migrate an existing Convex + Better Auth project to use this refactored package.
 
 ## Overview
 
-The migration process involves:
-1. Installing the package in your workspace
-2. Creating a configuration object
-3. Updating server-side imports
-4. Updating client-side imports
-5. Testing all auth flows
-6. Removing old files
+The package now follows a **client + shared** architecture:
+- **Client components**: Import from the package (reusable)
+- **Shared config/types**: Copy to your Convex backend (customizable)
+- **Server code**: Lives in your Convex backend (not in the package)
 
-## Step-by-Step Migration
+## Migration Steps
 
-### Step 1: Package Setup
+### Step 1: Copy Shared Files to Convex Backend
 
-The package is already set up in your workspace at `packages/convex-better-auth`.
-
-Verify it's recognized:
+The shared configuration files need to be copied to your Convex backend:
 
 ```bash
-npm install
-# or
-pnpm install
+# Create auth directory
+mkdir -p convex/auth
+
+# Copy shared files from the package
+cp packages/convex-better-auth/src/shared/config.ts convex/auth/
+cp packages/convex-better-auth/src/shared/constants.ts convex/auth/
+cp packages/convex-better-auth/src/shared/types.ts convex/auth/
 ```
 
-### Step 2: Create Configuration
+These files provide:
+- `config.ts` - Configuration interfaces and validation utilities
+- `constants.ts` - Email subjects, error messages, and shared constants
+- `types.ts` - Type definitions for auth providers, status, etc.
 
-In `/convex/auth.ts`, create your configuration object:
+### Step 2: Update Convex Backend to Use Config
 
+Update `/convex/auth.ts` to import and use the config:
+
+**Before:**
 ```typescript
-import type { ConvexBetterAuthConfig } from '@convex-better-auth/package/server'
+// Hardcoded values
+requireEmailVerification: false,
+minPasswordLength: undefined,
+from: 'Test <onboarding@example.com>',
+subject: 'Verify your email address',
+```
 
-const authPackageConfig: ConvexBetterAuthConfig = {
+**After:**
+```typescript
+import { type ConvexBetterAuthConfig, mergeConfig } from './auth/config'
+import {
+  EMAIL_SUBJECT_VERIFICATION,
+  EMAIL_SUBJECT_PASSWORD_RESET,
+  EMAIL_SUBJECT_MAGIC_LINK,
+  EMAIL_SUBJECT_OTP,
+} from './auth/constants'
+
+// Create configuration object
+const betterAuthConfig: ConvexBetterAuthConfig = {
   email: {
     from: 'Your App <noreply@example.com>',
   },
   password: {
-    minLength: 8,
+    minLength: 10,
     maxLength: 128,
-    // Add your password requirements
+    requireUppercase: true,
+    requireLowercase: true,
+    requireNumbers: true,
+    requireSpecialChars: false,
   },
   emailVerification: {
-    required: false, // Change to true if you want to require verification
+    required: false,
     resendEnabled: true,
+    resendCooldownSeconds: 60,
   },
   socialProviders: {
-    // Add your OAuth providers
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
   },
   site: {
     url: process.env.SITE_URL!,
   },
   branding: {
     name: 'Your App',
-    tagline: 'Your tagline',
-  },
-  hooks: {
-    // Move your onCreate, onUpdate, onDelete logic here
+    tagline: 'Simple, secure authentication',
   },
 }
+
+const config = mergeConfig(betterAuthConfig)
+
+// Use config values in createAuthOptions
+export const createAuthOptions = (ctx: GenericCtx<DataModel>) => ({
+  baseURL: config.site.url,
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: config.emailVerification.required,
+    minPasswordLength: config.password.minLength,
+    maxPasswordLength: config.password.maxLength,
+  },
+  socialProviders: config.socialProviders,
+  // ... rest of options
+})
 ```
 
-### Step 3: Update Server Code
+### Step 3: Update Email Functions
 
-Replace your `/convex/auth.ts` with package imports:
+Update `/convex/email.tsx` to use constants:
 
 **Before:**
-
 ```typescript
-import { betterAuth } from 'better-auth/minimal'
-import { createClient } from '@convex-dev/better-auth'
-import { sendEmailVerification, sendResetPassword } from './email'
-// ... lots of setup code
+subject: 'Verify your email address',
+from: 'Test <onboarding@example.com>',
 ```
 
 **After:**
-
 ```typescript
 import {
-  createAuthComponent,
-  createAuth,
-  createAuthQueries,
-  betterAuthSchema,
-} from '@convex-better-auth/package/server'
+  EMAIL_SUBJECT_VERIFICATION,
+  EMAIL_SUBJECT_PASSWORD_RESET,
+  EMAIL_SUBJECT_MAGIC_LINK,
+  EMAIL_SUBJECT_OTP,
+} from './auth/constants'
 
-export const authComponent = createAuthComponent(
-  components,
-  internal,
-  authConfig,
-  authPackageConfig,
-  betterAuthSchema
-)
+const emailFrom = process.env.EMAIL_FROM || 'Your App <noreply@example.com>'
 
-export const createAuthInstance = (ctx) =>
-  createAuth(ctx, authComponent, authPackageConfig, authConfig, components)
-
-const queries = createAuthQueries(authComponent)
-export const { safeGetUser, getUser } = queries
+export const sendEmailVerification = async (ctx, { to, url }) => {
+  await sendEmail(ctx, {
+    to,
+    from: emailFrom,
+    subject: EMAIL_SUBJECT_VERIFICATION,
+    html: await render(<VerifyEmail url={url} />),
+  })
+}
 ```
 
-### Step 4: Update Client Code
+### Step 4: Update Client Component Imports
 
-Update `/src/lib/auth-client.tsx`:
+The package structure has changed - components are now organized into `base` and `forms`:
 
 **Before:**
+```typescript
+import SignIn from '@/components/SignIn'
+import SignUp from '@/components/SignUp'
+import { ChangePassword } from '@/components/ChangePassword'
+```
 
+**After:**
+```typescript
+// Import from package
+import { SignIn, SignUp, ChangePassword } from '@convex-better-auth/package/client'
+
+// Or import from specific paths
+import { SignIn } from '@convex-better-auth/package/client/forms'
+import { PasswordInput, SocialButtons } from '@convex-better-auth/package/client/base'
+```
+
+### Step 5: Update Auth Client Import
+
+The auth client can now be imported directly:
+
+**Before:**
 ```typescript
 import { createAuthClient } from 'better-auth/react'
-import { twoFactorClient, magicLinkClient } from 'better-auth/client/plugins'
+import { magicLinkClient, emailOTPClient } from 'better-auth/client/plugins'
 // ... manual setup
 ```
 
 **After:**
-
 ```typescript
-export { authClient } from '@convex-better-auth/package/client'
+import { authClient } from '@convex-better-auth/package/client'
 ```
 
-### Step 5: Update Component Imports
+### Step 6: Verify Package Exports
 
-Update all route files that import auth components:
+The package now exports:
+- `/client` - All client components and auth client
+- `/client/base` - Base UI primitives (PasswordInput, SocialButtons, OTPInput, AuthCard)
+- `/client/forms` - Form components (SignIn, SignUp, Settings, etc.)
+- `/shared` - Shared types and configuration interfaces
 
-**Before:**
+The `/server` export has been removed - server code lives in your Convex backend.
 
-```typescript
-import SignIn from '@/components/SignIn'
-import SignUp from '@/components/SignUp'
-import Settings from '@/components/Settings'
+### Step 7: Environment Variables
+
+Add the EMAIL_FROM environment variable if using constants:
+
+```env
+EMAIL_FROM=Your App <noreply@example.com>
 ```
 
-**After:**
+Or the email will default to the value in your config.
 
-```typescript
-import { SignIn, SignUp, Settings } from '@convex-better-auth/package/client'
-```
+### Step 8: Test All Flows
 
-### Step 6: Remove Old Files
-
-After confirming everything works, remove these old files:
-
-```bash
-# Server-side (Convex)
-rm convex/email.tsx
-rm -r convex/emails
-
-# Client-side (src)
-rm src/components/SignIn.tsx
-rm src/components/SignUp.tsx
-rm src/components/ResetPassword.tsx
-rm src/components/EnableTwoFactor.tsx
-rm src/components/Settings.tsx
-
-# Note: Don't remove these yet - they're needed by the package:
-# - convex/betterAuth/ (schema)
-# - convex/auth.config.ts
-```
-
-### Step 7: Test Everything
-
-Test all authentication flows:
+Test these authentication flows:
 
 - ✅ Sign up with email/password
 - ✅ Sign in with email/password
 - ✅ Sign out
 - ✅ Password reset
-- ✅ Email verification (if enabled)
-- ✅ Change password (new feature!)
-- ✅ Social OAuth
+- ✅ Email verification
+- ✅ Change password
+- ✅ Social OAuth (GitHub, Google)
 - ✅ Magic link
 - ✅ Email OTP
 - ✅ 2FA
 - ✅ Account deletion
 
-### Step 8: Configure New Features
+## New Features After Migration
 
-Take advantage of new features:
+### 1. Centralized Configuration
 
-#### 1. Password Requirements
-
-Configure stricter password requirements:
-
+All auth settings in one place:
 ```typescript
-password: {
-  minLength: 10,
-  maxLength: 128,
-  requireUppercase: true,
-  requireLowercase: true,
-  requireNumbers: true,
-  requireSpecialChars: true,
+const betterAuthConfig: ConvexBetterAuthConfig = {
+  email: { from: '...' },
+  password: { minLength: 10, requireUppercase: true },
+  emailVerification: { required: true },
+  // ...
 }
 ```
 
-These will be enforced in:
-- Sign up form
-- Change password form
-- Password reset form
+### 2. Base Components
 
-#### 2. Email Verification
-
-Enable required email verification:
-
+Reusable UI primitives you can compose:
 ```typescript
-emailVerification: {
-  required: true,  // Users must verify before signing in
-  resendEnabled: true,
-  resendCooldownSeconds: 60,
-}
+import { PasswordInput, SocialButtons, OTPInput, AuthCard } from '@convex-better-auth/package/client/base'
 ```
 
-#### 3. Change Password
+### 3. Organized Component Structure
 
-The Settings page now includes a "Change Password" button that:
-- Validates against your password requirements
-- Shows password strength
-- Optionally revokes other sessions
+- **Base components** (`/base/`) - Low-level primitives
+- **Form components** (`/forms/`) - Complete auth flows
 
-#### 4. Resend Verification
+### 4. Shared Constants
 
-Users can now resend verification emails with automatic cooldown protection.
+No more hardcoded strings:
+```typescript
+import {
+  EMAIL_SUBJECT_VERIFICATION,
+  ERROR_INVALID_CREDENTIALS,
+  SUCCESS_PASSWORD_CHANGED,
+} from './auth/constants'
+```
 
 ## Troubleshooting
 
 ### Import Errors
 
-If you see import errors for `@convex-better-auth/package`:
+If you see module resolution errors:
 
-1. Make sure you ran `npm install` or `pnpm install`
+1. Run `npm install` or `pnpm install`
 2. Restart your TypeScript server
 3. Check that `packages/convex-better-auth` exists
+4. Verify package.json exports are correct
 
 ### Type Errors
 
-If you see type errors in the package:
+If TypeScript can't find types:
 
-1. Make sure TypeScript can find the package's `tsconfig.json`
-2. Check that your root `tsconfig.json` has the workspace reference
+1. Ensure shared files are copied to `convex/auth/`
+2. Check import paths are correct (`'./auth/config'` not `'../auth/config'`)
 3. Restart your IDE
+
+### Component Not Found
+
+If components can't be imported:
+
+1. Check the new import paths (use `/client/forms` or `/client/base`)
+2. Ensure you're not importing from `/server` (removed)
+3. Use the correct package paths in import statements
 
 ### Missing UI Components
 
-The package uses shadcn/ui components. Make sure you have:
+The package uses `@tanstack-app/ui` (shadcn/ui). Ensure you have:
+- Button, Card, Input, Label, Checkbox components available
 
-- `@/components/ui/button`
-- `@/components/ui/card`
-- `@/components/ui/input`
-- `@/components/ui/label`
-- `@/components/ui/checkbox`
-- `@/components/ui/badge`
+## Architecture Benefits
 
-If missing, install them:
+After migration:
 
-```bash
-npx shadcn-ui@latest add button card input label checkbox badge
-```
-
-### Email Not Sending
-
-Make sure you have:
-
-1. `RESEND_API_KEY` in your environment variables
-2. Resend component configured in Convex
-3. Verified sender domain in Resend
+✅ **Separation of Concerns**: Client (importable) vs Server (in convex)
+✅ **Type-Safe Config**: Centralized configuration with TypeScript
+✅ **Reusable Components**: Base components for custom flows
+✅ **Maintainable**: Clear structure and organization
+✅ **Git Submodule Ready**: Easy to share across projects
+✅ **No Hardcoded Values**: Constants and config for all strings
 
 ## Rollback
 
 If you need to rollback:
 
-1. Restore your old `/convex/auth.ts` from git
-2. Restore your old `/src/lib/auth-client.tsx`
-3. Restore component imports in routes
-4. Restore old component files
-
 ```bash
-git checkout HEAD -- convex/auth.ts src/lib/auth-client.tsx
+# Restore old auth files
+git checkout HEAD -- convex/auth.ts convex/email.tsx
+
+# Remove copied files
+rm -rf convex/auth/
+
+# Restore client imports
 git checkout HEAD -- src/routes/
 ```
 
-## Benefits After Migration
-
-After migration, you'll have:
-
-✅ Centralized auth configuration
-✅ Reusable across projects
-✅ Easy to update via git submodule
-✅ New features (change password, enhanced verification)
-✅ Type-safe configuration
-✅ Better organized code
-✅ Cleaner main application
-✅ Password requirements validation
-✅ Session revocation options
-
 ## Next Steps
 
-1. Consider converting to a git submodule for reuse across projects
-2. Customize email templates for your brand
-3. Add custom password validation logic if needed
-4. Extend with additional auth providers
-5. Add custom user fields via hooks
+1. Customize email templates with your branding
+2. Adjust password requirements for your use case
+3. Add custom validation logic if needed
+4. Consider stricter email verification requirements
+5. Extend with additional OAuth providers
 
 ## Support
 
-For issues or questions:
+For issues:
 - Check the README.md in the package
-- Review the Better Auth documentation
-- Check Convex documentation
-- File an issue in your project repository
+- Review [Better Auth docs](https://better-auth.com)
+- Review [Convex docs](https://docs.convex.dev)

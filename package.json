@@ -6,26 +6,29 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./server": "./src/server/index.ts",
     "./client": "./src/client/index.ts",
-    "./shared": "./src/shared/index.ts",
-    "./schema": "./betterAuth/schema.ts"
+    "./client/base": "./src/client/components/base/index.ts",
+    "./client/forms": "./src/client/components/forms/index.ts",
+    "./shared": "./src/shared/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack-app/ui": "file:../ui"
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack-app/ui": "file:../ui",
+    "react-hook-form": "^7.70.0",
+    "zod": "^4.3.5"
   },
   "peerDependencies": {
-    "better-auth": "^1.4.10",
     "@convex-dev/better-auth": "^0.10.9",
     "@convex-dev/resend": "^0.1.13",
     "@react-email/components": "0.5.0",
+    "@tanstack/react-router": "^1.145.0",
+    "better-auth": "^1.4.10",
     "convex": "^1.31.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@tanstack/react-router": "^1.145.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
