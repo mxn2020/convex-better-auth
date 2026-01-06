@@ -1,14 +1,9 @@
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
+// src/client/components/ChangePassword.tsx
+
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tanstack-monorepo/ui'
+import { Input } from '@tanstack-monorepo/ui'
+import { Label } from '@tanstack-monorepo/ui'
+import { Checkbox } from '@tanstack-monorepo/ui'
 import { authClient } from '../auth-client'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -232,7 +227,7 @@ export function ChangePassword({
           <Checkbox
             id="revoke-sessions"
             checked={revokeOtherSessions}
-            onCheckedChange={(checked) => setRevokeOtherSessions(checked as boolean)}
+            onChange={(checked) => setRevokeOtherSessions(checked as boolean)}
             disabled={loading}
           />
           <Label

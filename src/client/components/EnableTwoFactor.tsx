@@ -1,13 +1,15 @@
-import { Button } from '@/components/ui/button'
+// src/client/components/EnableTwoFactor.tsx
+
+import { Button } from '@tanstack-monorepo/ui'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@tanstack-monorepo/ui'
+import { Input } from '@tanstack-monorepo/ui'
+import { Label } from '@tanstack-monorepo/ui'
 import { authClient } from '@/lib/auth-client'
 import { convexQuery } from '@convex-dev/react-query'
 import { api } from '~/convex/_generated/api'

@@ -1,3 +1,5 @@
+// src/server/emails/magicLink.tsx
+
 import { Heading, Link, Text } from "@react-email/components";
 import { BaseEmail, styles } from "./components/BaseEmail";
 import React from "react";

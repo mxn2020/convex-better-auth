@@ -1,3 +1,5 @@
+// src/server/emails/components/BaseEmail.tsx
+
 import {
   Body,
   Container,

@@ -1,5 +1,7 @@
+// src/client/components/SignIn.tsx
+
 import { Link, useNavigate, useRouter } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
+import { Button } from '@tanstack-monorepo/ui'
 import {
   Card,
   CardContent,
@@ -7,9 +9,9 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from '@tanstack-monorepo/ui'
+import { Input } from '@tanstack-monorepo/ui'
+import { Label } from '@tanstack-monorepo/ui'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'

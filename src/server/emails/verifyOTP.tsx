@@ -1,3 +1,5 @@
+// src/server/emails/verifyOTP.tsx
+
 import React from "react";
 import { Heading, Text } from "@react-email/components";
 import { BaseEmail, styles } from "./components/BaseEmail";

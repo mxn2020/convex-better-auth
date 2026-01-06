@@ -1,4 +1,6 @@
-import { Button } from '@/components/ui/button'
+// src/client/components/ResendVerification.tsx
+
+import { Button } from '@tanstack-monorepo/ui'
 import { authClient } from '../auth-client'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
