@@ -63,6 +63,8 @@ export function useSignIn(options: UseSignInOptions = {}) {
       setError(null)
       setData(null)
 
+      console.log('Starting sign-in process...')
+
       try {
         const result = await authClient.signIn.email(
           { email, password },

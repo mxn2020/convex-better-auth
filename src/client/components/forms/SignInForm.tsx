@@ -70,6 +70,7 @@ export default function SignInForm() {
 
   // Auth handlers
   const handlePasswordSignIn = form.handleSubmit(async (data) => {
+    console.log('Submitting password sign-in for', data.email)
     await signIn.signInWithPassword(data.email, data.password)
   })
 
