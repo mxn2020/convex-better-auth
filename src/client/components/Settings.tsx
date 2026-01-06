@@ -3,7 +3,7 @@
 import EnableTwoFactor from './EnableTwoFactor'
 import { ChangePassword } from './ChangePassword'
 import { ResendVerification } from './ResendVerification'
-import { Button } from '@tanstack-monorepo/ui'
+import { Button } from '@tanstack-app/ui'
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@tanstack-monorepo/ui'
-import { Badge } from '@tanstack-monorepo/ui'
+} from '@tanstack-app/ui'
+import { Badge } from '@tanstack-app/ui'
 import { authClient } from '../auth-client'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { AlertTriangle, ArrowLeft, CheckCircle2, Mail, XCircle, Shield, Key } from 'lucide-react'

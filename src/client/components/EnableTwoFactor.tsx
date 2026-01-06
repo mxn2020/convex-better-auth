@@ -1,18 +1,18 @@
 // src/client/components/EnableTwoFactor.tsx
 
-import { Button } from '@tanstack-monorepo/ui'
+import { Button } from '@tanstack-app/ui'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@tanstack-monorepo/ui'
-import { Input } from '@tanstack-monorepo/ui'
-import { Label } from '@tanstack-monorepo/ui'
-import { authClient } from '@/lib/auth-client'
+} from '@tanstack-app/ui'
+import { Input } from '@tanstack-app/ui'
+import { Label } from '@tanstack-app/ui'
+import { authClient } from '../auth-client'
 import { convexQuery } from '@convex-dev/react-query'
-import { api } from '~/convex/_generated/api'
+import { api } from '../../../../../convex/_generated/api'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { ArrowLeft, Check, Copy, Loader2 } from 'lucide-react'
 import { useState } from 'react'

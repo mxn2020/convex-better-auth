@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack-monorepo/ui": "file:../ui"
+    "@tanstack-app/ui": "file:../ui"
   },
   "peerDependencies": {
     "better-auth": "^1.4.10",

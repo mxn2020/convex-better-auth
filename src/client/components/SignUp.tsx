@@ -1,6 +1,6 @@
 // src/client/components/SignUp.tsx
 
-import { Button } from '@tanstack-monorepo/ui'
+import { Button } from '@tanstack-app/ui'
 import {
   Card,
   CardContent,
@@ -8,12 +8,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@tanstack-monorepo/ui'
-import { Input } from '@tanstack-monorepo/ui'
-import { Label } from '@tanstack-monorepo/ui'
+} from '@tanstack-app/ui'
+import { Input } from '@tanstack-app/ui'
+import { Label } from '@tanstack-app/ui'
 import { useState } from 'react'
 import { Loader2, X } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '../auth-client'
 import { toast } from 'sonner'
 import { Link, useNavigate } from '@tanstack/react-router'
 

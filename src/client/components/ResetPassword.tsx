@@ -1,6 +1,6 @@
 // src/client/components/ResetPassword.tsx
 
-import { Button } from '@tanstack-monorepo/ui'
+import { Button } from '@tanstack-app/ui'
 import {
   Card,
   CardContent,
@@ -8,12 +8,12 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-} from '@tanstack-monorepo/ui'
-import { Input } from '@tanstack-monorepo/ui'
-import { Label } from '@tanstack-monorepo/ui'
+} from '@tanstack-app/ui'
+import { Input } from '@tanstack-app/ui'
+import { Label } from '@tanstack-app/ui'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '../auth-client'
 import { useSearch } from '@tanstack/react-router'
 import { useNavigate } from '@tanstack/react-router'
 

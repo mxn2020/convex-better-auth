@@ -1,9 +1,9 @@
 // src/client/components/ChangePassword.tsx
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tanstack-monorepo/ui'
-import { Input } from '@tanstack-monorepo/ui'
-import { Label } from '@tanstack-monorepo/ui'
-import { Checkbox } from '@tanstack-monorepo/ui'
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tanstack-app/ui'
+import { Input } from '@tanstack-app/ui'
+import { Label } from '@tanstack-app/ui'
+import { Checkbox } from '@tanstack-app/ui'
 import { authClient } from '../auth-client'
 import { useState } from 'react'
 import { toast } from 'sonner'
