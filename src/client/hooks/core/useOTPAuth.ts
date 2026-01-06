@@ -172,7 +172,7 @@ export function useOTPAuth(options: UseOTPAuthOptions = {}) {
               if (!options.disableAutoNavigate) {
                 const redirectPath =
                   options.redirectTo || config.navigation?.afterSignIn || '/'
-                await navigate({ to: redirectPath })
+                window.location.href = redirectPath
               }
 
               options.onSuccess?.()

@@ -130,10 +130,11 @@ export function useSignUp(options: UseSignUpOptions = {}) {
               toast.success(successMessage)
 
               // Navigate to configured redirect
+              // Use full page reload for Convex to pick up auth state
               if (!options.disableAutoNavigate) {
                 const redirectPath =
                   options.redirectTo || config.navigation?.afterSignUp || '/'
-                await navigate({ to: redirectPath })
+                window.location.href = redirectPath
               }
 
               options.onSuccess?.(ctx.data)
