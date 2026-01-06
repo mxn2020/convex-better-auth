@@ -108,7 +108,7 @@ export function useOTPAuth(options: UseOTPAuthOptions = {}) {
         await authClient.emailOtp.sendVerificationOtp(
           {
             email,
-            type: options.type || 'sign-in',
+            type: options.type === 'sign-up' ? 'email-verification' : 'sign-in',
           },
           {
             onRequest: () => {

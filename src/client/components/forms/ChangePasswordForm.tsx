@@ -226,8 +226,8 @@ export default function ChangePasswordForm({
           <Checkbox
             id="revoke-sessions"
             checked={form.watch('revokeOtherSessions')}
-            onCheckedChange={(checked) =>
-              form.setValue('revokeOtherSessions', checked as boolean)
+            onChange={(checked) =>
+              form.setValue('revokeOtherSessions', checked)
             }
             disabled={isLoading}
           />

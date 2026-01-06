@@ -119,7 +119,7 @@ export function useResendVerification(
       setError(null)
 
       try {
-        await authClient.emailVerification.sendVerificationEmail({
+        await (authClient as { emailVerification?: { sendVerificationEmail: (params: { email: string }) => Promise<unknown> } }).emailVerification?.sendVerificationEmail({
           email,
         })
 

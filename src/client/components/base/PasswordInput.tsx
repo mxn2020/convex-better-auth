@@ -8,13 +8,15 @@ import { useState } from 'react'
 export interface PasswordInputProps {
   id: string
   label?: string
-  value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  value?: string
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
   required?: boolean
   disabled?: boolean
   autoComplete?: string
   className?: string
+  name?: string
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
 }
 
 export function PasswordInput({
@@ -27,6 +29,8 @@ export function PasswordInput({
   disabled,
   autoComplete,
   className,
+  name,
+  onBlur,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false)
 
@@ -36,9 +40,11 @@ export function PasswordInput({
       <div className="relative">
         <Input
           id={id}
+          name={name}
           type={showPassword ? 'text' : 'password'}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           placeholder={placeholder}
           required={required}
           disabled={disabled}

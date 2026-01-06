@@ -32,7 +32,7 @@ export interface FormFieldProps
  * ```
  */
 export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
-  ({ label, error, helperText, id, ...props }, ref) => {
+  ({ label, error, helperText, id, size: _size, ...props }, ref) => {
     const fieldId = id || label.toLowerCase().replace(/\s+/g, '-')
 
     return (

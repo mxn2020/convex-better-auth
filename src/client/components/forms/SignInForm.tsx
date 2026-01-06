@@ -153,6 +153,7 @@ export default function SignInForm() {
           </div>
           <FormField
             id="password"
+            label="Password"
             type="password"
             placeholder="password"
             autoComplete="password"

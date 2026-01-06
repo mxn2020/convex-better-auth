@@ -127,8 +127,9 @@ export function useTwoFactorEnable(options: UseTwoFactorEnableOptions = {}) {
           code,
         })
 
-        if (result.data?.backupCodes) {
-          setBackupCodes(result.data.backupCodes)
+        const backupCodes = (result.data as { backupCodes?: string[] })?.backupCodes
+        if (backupCodes) {
+          setBackupCodes(backupCodes)
           setStep('backup-codes')
 
           const successMessage =
