@@ -4,10 +4,22 @@
  * Export all auth components for Solid.
  */
 
-// Forms
+// Auth client
+export * from './auth-client'
+
+// Configuration
+export * from './config'
+
+// Providers
+export * from './providers'
+
+// Hooks
+export * from './hooks'
+
+// Components
+export * from './components'
+export * from './components/base'
 export * from './components/forms'
 
-// TODO: Export additional modules as they are created
-// export * from './components/base'
-// export * from './hooks'
-// export * from './providers'
+// Utilities
+export * from './utils'

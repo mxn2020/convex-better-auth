@@ -17,7 +17,19 @@
     "./shared": "./src/shared/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "build": "pnpm build:types",
+    "build:types": "pnpm build:types:react && pnpm build:types:solid",
+    "build:types:react": "tsc -p tsconfig.react.json",
+    "build:types:solid": "tsc -p tsconfig.solid.json",
+    "lint": "echo \"No linter configured yet\"",
+    "type-check": "pnpm type-check:react && pnpm type-check:solid",
+    "type-check:react": "tsc -p tsconfig.react.json --noEmit",
+    "type-check:solid": "tsc -p tsconfig.solid.json --noEmit",
+    "typecheck": "pnpm type-check",
+    "error": "pnpm type-check && pnpm lint",
+    "diagnostics": "pnpm type-check && pnpm lint",
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@tanstack-app/ui": "file:../ui",
@@ -54,10 +66,21 @@
   },
   "devDependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-links": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-hook-form": "^7.70.0",
     "solid-js": "^1.9.10",
+    "storybook": "^8.6.14",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   },
   "keywords": [

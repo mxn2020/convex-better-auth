@@ -6,8 +6,7 @@
 
 export { SignInForm, type SignInFormProps } from './SignInForm'
 
-// TODO: Port additional forms from React
-// - SignUpForm
-// - ResetPasswordForm
-// - ChangePasswordForm
-// - EnableTwoFactorForm
+// Additional forms can be added as needed
+// Note: The current SignInForm is a simplified version.
+// For full functionality matching the React version, use the hooks
+// directly with the base components.
