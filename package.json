@@ -28,8 +28,12 @@
     "typecheck": "pnpm type-check",
     "error": "pnpm type-check && pnpm lint",
     "diagnostics": "pnpm type-check && pnpm lint",
-    "storybook": "storybook dev -p 6007",
-    "build-storybook": "storybook build"
+    "storybook": "pnpm storybook:react",
+    "storybook:react": "storybook dev -p 6008 --config-dir .storybook-react",
+    "storybook:solid": "storybook dev -p 6009 --config-dir .storybook-solid",
+    "build-storybook": "pnpm build-storybook:react && pnpm build-storybook:solid",
+    "build-storybook:react": "storybook build --config-dir .storybook-react -o storybook-static-react",
+    "build-storybook:solid": "storybook build --config-dir .storybook-solid -o storybook-static-solid"
   },
   "dependencies": {
     "@tanstack-app/ui": "file:../ui",
@@ -80,6 +84,8 @@
     "react-hook-form": "^7.70.0",
     "solid-js": "^1.9.10",
     "storybook": "^8.6.14",
+    "storybook-solidjs": "^1.0.0-beta.2",
+    "storybook-solidjs-vite": "^1.0.0-beta.2",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   },

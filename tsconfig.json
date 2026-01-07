@@ -19,8 +19,11 @@
     "composite": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@tanstack-app/ui/react": ["../ui/src/react"],
+      "@tanstack-app/ui/solid": ["../ui/src/solid"],
+      "@tanstack-app/ui/*": ["../ui/src/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.tsx"]
+  "exclude": ["node_modules", "dist", "**/*.stories.tsx", "**/*.test.tsx", ".storybook-react", ".storybook-solid"]
 }
