@@ -33,7 +33,7 @@ import { useTwoFactorDisable } from '../../hooks/twoFactor/useTwoFactorDisable'
 import EnableTwoFactorForm from './EnableTwoFactorForm'
 import ChangePasswordForm from './ChangePasswordForm'
 import { ResendVerificationForm } from './ResendVerificationForm'
-import type { PasswordRequirements } from '../../../shared/config'
+import type { PasswordRequirements } from '../../../../shared/config'
 
 export interface SettingsContentProps {
   /** Password requirements for change password form */

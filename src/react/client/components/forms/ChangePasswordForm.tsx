@@ -17,8 +17,8 @@ import {
   type ChangePasswordFormData,
 } from '../../utils/validation'
 import { PasswordInput } from '../base/PasswordInput'
-import { LoadingButton } from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/base'
-import type { PasswordRequirements } from '../../../shared/config'
+import { LoadingButton } from '../base'
+import type { PasswordRequirements } from '../../../../shared/config'
 
 export interface ChangePasswordFormProps {
   /** Password requirements for validation */

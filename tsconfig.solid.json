@@ -5,8 +5,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "outDir": "./dist/solid",
-    "rootDir": "./src"
+    "outDir": "./dist/solid"
   },
   "include": [
     "src/solid/**/*",

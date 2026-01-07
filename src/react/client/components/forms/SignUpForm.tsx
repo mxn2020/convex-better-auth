@@ -15,7 +15,7 @@ import { useSignUp } from '../../hooks/core/useSignUp'
 import { useSocialAuth } from '../../hooks/core/useSocialAuth'
 import { useAuthConfig } from '../../hooks/utils/useAuthConfig'
 import { signUpSchema, type SignUpFormData } from '../../utils/validation'
-import { FormField, LoadingButton } from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/base'
+import { FormField, LoadingButton } from '../base'
 import { SocialButtons } from '../base/SocialButtons'
 
 /**

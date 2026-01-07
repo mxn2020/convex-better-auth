@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from '@tanstack-app/ui'
 import ChangePasswordForm from './ChangePasswordForm'
-import type { PasswordRequirements } from '../../../shared/config'
+import type { PasswordRequirements } from '../../../../shared/config'
 
 export interface ChangePasswordProps {
   /** Password requirements for validation */

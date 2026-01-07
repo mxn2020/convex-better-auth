@@ -8,7 +8,7 @@ import {
   validatePassword,
   getPasswordRequirementsList,
   type PasswordRequirements,
-} from '../../../shared/config'
+} from '../../../../shared/config'
 import { useAuthConfig } from '../utils/useAuthConfig'
 
 /**

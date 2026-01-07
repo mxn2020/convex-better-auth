@@ -3,7 +3,7 @@
  * Enables feature flags, navigation control, and UI customization
  */
 
-import type { PasswordRequirements } from '../../shared/config'
+import type { PasswordRequirements } from '../../../shared/config'
 
 /**
  * Available authentication methods

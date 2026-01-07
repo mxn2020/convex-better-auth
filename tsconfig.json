@@ -20,6 +20,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@tanstack-app/ui": ["../ui/src/react"],
       "@tanstack-app/ui/react": ["../ui/src/react"],
       "@tanstack-app/ui/solid": ["../ui/src/solid"],
       "@tanstack-app/ui/*": ["../ui/src/*"]

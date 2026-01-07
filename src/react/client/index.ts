@@ -9,10 +9,10 @@
 export { authClient, type AuthClient } from './auth-client'
 
 // Base components (reusable primitives)
-export * from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/base'
+export * from './components/base'
 
 // Form components (complete auth flows)
-export * from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/forms'
+export * from './components/forms'
 
 // Utility components
 export { UserProfile, type UserProfileProps } from './components/UserProfile'
@@ -26,7 +26,7 @@ export type {
   PasswordRequirements,
   EmailVerificationConfig,
   ConvexBetterAuthConfig,
-} from '../shared/config'
+} from '../../shared/config'
 
 export type {
   AuthProvider,
@@ -34,4 +34,4 @@ export type {
   EmailVerificationStatus,
   TwoFactorStatus,
   PasswordStrength,
-} from '../shared/types'
+} from '../../shared/types'

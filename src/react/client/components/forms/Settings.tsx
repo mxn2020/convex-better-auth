@@ -6,28 +6,8 @@
  * Manages navigation between different setting sections
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Button,
-} from '@tanstack-app/ui'
-import { Link } from '@tanstack/react-router'
-import {
-  AlertTriangle,
-  ArrowLeft,
-  CheckCircle2,
-  Mail,
-  XCircle,
-  Shield,
-  Key,
-} from 'lucide-react'
 import SettingsContent from './SettingsContent'
-import type { PasswordRequirements } from '../../../shared/config'
+import type { PasswordRequirements } from '../../../../shared/config'
 
 export interface SettingsProps {
   /** Password requirements for change password form */
