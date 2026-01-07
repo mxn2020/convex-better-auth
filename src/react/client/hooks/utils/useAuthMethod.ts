@@ -1,3 +1,5 @@
+// src/react/client/hooks/utils/useAuthMethod.ts
+
 /**
  * Hook for dynamic authentication method selection
  * Provides method toggling and filtering based on configuration

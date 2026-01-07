@@ -1,9 +1,17 @@
+// src/solid/client/providers/AuthConfigProvider.tsx
+
 /**
- * Auth Configuration Provider for Solid
- * Provides configuration context to all auth hooks and components
+ * Auth Configuration Provider
+ * Provides configuration context to all auth composables and components
  */
 
-import { createContext, useContext, createMemo, type JSX, type Component } from 'solid-js'
+import {
+  createContext,
+  useContext,
+  createMemo,
+  type ParentComponent,
+  type Accessor,
+} from 'solid-js'
 import type { AuthClientConfig, AuthMethod } from '../config/types'
 import { mergeAuthConfig } from '../config/merge'
 
@@ -12,7 +20,7 @@ import { mergeAuthConfig } from '../config/merge'
  */
 export interface AuthConfigContextValue {
   /** Complete merged configuration */
-  config: AuthClientConfig
+  config: Accessor<AuthClientConfig>
 
   /** Check if a specific auth method is enabled */
   isMethodEnabled: (method: AuthMethod) => boolean
@@ -30,9 +38,6 @@ const AuthConfigContext = createContext<AuthConfigContextValue>()
  * Props for AuthConfigProvider
  */
 export interface AuthConfigProviderProps {
-  /** Child components */
-  children: JSX.Element
-
   /** User configuration (optional) - will be merged with defaults */
   config?: Partial<AuthClientConfig>
 }
@@ -56,47 +61,46 @@ export interface AuthConfigProviderProps {
  * </AuthConfigProvider>
  * ```
  */
-export const AuthConfigProvider: Component<AuthConfigProviderProps> = (props) => {
-  // Merge user config with defaults
+export const AuthConfigProvider: ParentComponent<AuthConfigProviderProps> = (
+  props
+) => {
+  // Merge user config with defaults - reactive to prop changes
   const mergedConfig = createMemo(() => mergeAuthConfig(props.config || {}))
 
   // Create context value with helper functions
-  const value = createMemo<AuthConfigContextValue>(() => {
-    const config = mergedConfig()
+  const value: AuthConfigContextValue = {
+    config: mergedConfig,
 
-    return {
-      config,
+    isMethodEnabled: (method: AuthMethod) => {
+      const enabledMethods = mergedConfig().features?.enabledAuthMethods ?? []
+      return enabledMethods.includes(method)
+    },
 
-      isMethodEnabled: (method: AuthMethod) => {
-        const enabledMethods = config.features?.enabledAuthMethods ?? []
-        return enabledMethods.includes(method)
-      },
+    getEnabledProviders: () => {
+      const config = mergedConfig()
+      const providers: ('github' | 'google')[] = []
 
-      getEnabledProviders: () => {
-        const providers: ('github' | 'google')[] = []
+      if (config.socialProviders?.github?.enabled) {
+        providers.push('github')
+      }
 
-        if (config.socialProviders?.github?.enabled) {
-          providers.push('github')
-        }
+      if (config.socialProviders?.google?.enabled) {
+        providers.push('google')
+      }
 
-        if (config.socialProviders?.google?.enabled) {
-          providers.push('google')
-        }
-
-        return providers
-      },
-    }
-  })
+      return providers
+    },
+  }
 
   return (
-    <AuthConfigContext.Provider value={value()}>
+    <AuthConfigContext.Provider value={value}>
       {props.children}
     </AuthConfigContext.Provider>
   )
 }
 
 /**
- * Hook to access auth configuration
+ * Composable to access auth configuration
  * Must be used within AuthConfigProvider
  *
  * @throws Error if used outside AuthConfigProvider
@@ -104,20 +108,22 @@ export const AuthConfigProvider: Component<AuthConfigProviderProps> = (props) =>
  * @example
  * ```tsx
  * function MyComponent() {
- *   const { config, isMethodEnabled } = useAuthConfig()
+ *   const { config, isMethodEnabled } = createAuthConfig()
  *
- *   if (isMethodEnabled('github')) {
- *     return <GitHubButton />
- *   }
+ *   return (
+ *     <Show when={isMethodEnabled('github')}>
+ *       <GitHubButton />
+ *     </Show>
+ *   )
  * }
  * ```
  */
-export function useAuthConfig(): AuthConfigContextValue {
-  const context = useContext(AuthConfigContext)
+export function createAuthConfig(): AuthConfigContextValue {
+  const context = useContext(AuthConfigContext)  // ← Changed from createContext to useContext
 
   if (!context) {
     throw new Error(
-      'useAuthConfig must be used within AuthConfigProvider. ' +
+      'createAuthConfig must be used within AuthConfigProvider. ' +
         'Please wrap your app with <AuthConfigProvider>.'
     )
   }

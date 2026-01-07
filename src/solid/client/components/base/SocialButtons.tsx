@@ -1,12 +1,12 @@
 // src/solid/client/components/base/SocialButtons.tsx
 
-import type { Component } from 'solid-js'
+import type { Component, JSX } from 'solid-js'
 import { Show } from 'solid-js'
 import { Button } from '@tanstack-app/ui/solid'
 
 export interface SocialButtonsProps {
-  onGithubClick?: () => void
-  onGoogleClick?: () => void
+  onGithubClick?: JSX.EventHandler<HTMLButtonElement, MouseEvent>
+  onGoogleClick?: JSX.EventHandler<HTMLButtonElement, MouseEvent>
   disabled?: boolean
   showGithub?: boolean
   showGoogle?: boolean
@@ -15,13 +15,13 @@ export interface SocialButtonsProps {
 export const SocialButtons: Component<SocialButtonsProps> = (props) => {
   return (
     <div class="space-y-2">
-      <Show when={props.showGithub !== false && props.onGithubClick}>
+      <Show when={props.showGithub && props.onGithubClick}>
         <Button
           type="button"
           variant="outline"
           class="w-full gap-2"
           disabled={props.disabled}
-          onClick={props.onGithubClick}
+          onclick={props.onGithubClick}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -38,13 +38,13 @@ export const SocialButtons: Component<SocialButtonsProps> = (props) => {
         </Button>
       </Show>
 
-      <Show when={props.showGoogle !== false && props.onGoogleClick}>
+      <Show when={props.showGoogle && props.onGoogleClick}>
         <Button
           type="button"
           variant="outline"
           class="w-full gap-2"
           disabled={props.disabled}
-          onClick={props.onGoogleClick}
+          onclick={props.onGoogleClick}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

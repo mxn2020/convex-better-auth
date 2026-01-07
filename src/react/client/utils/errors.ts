@@ -1,3 +1,5 @@
+// src/react/client/utils/errors.ts
+
 /**
  * Error handling utilities for auth operations
  */

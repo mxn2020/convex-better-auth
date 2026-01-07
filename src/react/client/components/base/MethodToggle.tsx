@@ -1,3 +1,5 @@
+// src/react/client/components/base/MethodToggle.tsx
+
 /**
  * Toggle between password and passwordless authentication methods
  * Only shown when both methods are available

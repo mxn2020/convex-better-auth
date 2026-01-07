@@ -2,12 +2,19 @@
 
 import type { Component, JSX } from 'solid-js'
 import { Show } from 'solid-js'
-import { Input, Label } from '@tanstack-app/ui/solid'
+import { Input } from '@tanstack-app/ui/solid'
+import { Label } from '@tanstack-app/ui/solid'
 
-export interface OTPInputProps extends JSX.InputHTMLAttributes<HTMLInputElement> {
+export interface OTPInputProps {
   id: string
   label?: string
-  ref?: HTMLInputElement | ((el: HTMLInputElement) => void)
+  value: string
+  onChange: JSX.EventHandler<HTMLInputElement, InputEvent>
+  placeholder?: string
+  required?: boolean
+  disabled?: boolean
+  maxLength?: number
+  class?: string
 }
 
 export const OTPInput: Component<OTPInputProps> = (props) => {
@@ -18,13 +25,16 @@ export const OTPInput: Component<OTPInputProps> = (props) => {
       </Show>
       <Input
         id={props.id}
-        ref={props.ref}
         type="text"
-        placeholder={props.placeholder || 'Enter verification code'}
+        value={props.value}
+        oninput={props.onChange}
+        placeholder={props.placeholder ?? 'Enter verification code'}
+        required={props.required}
+        disabled={props.disabled}
         pattern="[0-9]*"
-        inputMode="numeric"
-        maxLength={props.maxLength || 6}
-        {...props}
+        inputmode="numeric"
+        maxlength={props.maxLength ?? 6}
+        class={props.class}
       />
     </div>
   )

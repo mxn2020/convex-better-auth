@@ -1,3 +1,5 @@
+// src/react/client/utils/validation.ts
+
 /**
  * Form validation schemas using Zod
  * Provides type-safe form validation for all auth forms

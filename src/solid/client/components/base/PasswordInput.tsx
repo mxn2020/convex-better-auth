@@ -1,14 +1,24 @@
 // src/solid/client/components/base/PasswordInput.tsx
 
 import type { Component, JSX } from 'solid-js'
-import { Show, createSignal } from 'solid-js'
-import { Input, Label } from '@tanstack-app/ui/solid'
-import { Eye, EyeOff } from 'lucide-solid'
+import { createSignal } from 'solid-js'
+import { Input } from '@tanstack-app/ui/solid'
+import { Label } from '@tanstack-app/ui/solid'
+import Eye from 'lucide-solid/icons/eye'
+import EyeOff from 'lucide-solid/icons/eye-off'
 
-export interface PasswordInputProps extends JSX.InputHTMLAttributes<HTMLInputElement> {
+export interface PasswordInputProps {
   id: string
   label?: string
-  ref?: HTMLInputElement | ((el: HTMLInputElement) => void)
+  value?: string
+  onInput?: JSX.EventHandler<HTMLInputElement, InputEvent>
+  onBlur?: JSX.EventHandler<HTMLInputElement, FocusEvent>
+  placeholder?: string
+  required?: boolean
+  disabled?: boolean
+  autoComplete?: string
+  class?: string
+  name?: string
 }
 
 export const PasswordInput: Component<PasswordInputProps> = (props) => {
@@ -16,27 +26,31 @@ export const PasswordInput: Component<PasswordInputProps> = (props) => {
 
   return (
     <div class="space-y-2">
-      <Show when={props.label}>
-        <Label for={props.id}>{props.label}</Label>
-      </Show>
+      {props.label && <Label for={props.id}>{props.label}</Label>}
       <div class="relative">
         <Input
           id={props.id}
-          ref={props.ref}
+          name={props.name}
           type={showPassword() ? 'text' : 'password'}
-          {...props}
+          value={props.value}
+          oninput={props.onInput}
+          onblur={props.onBlur}
+          placeholder={props.placeholder}
+          required={props.required}
+          disabled={props.disabled}
+          autocomplete={props.autoComplete}
+          class={props.class}
         />
         <button
           type="button"
-          onClick={() => setShowPassword(!showPassword())}
+          onclick={() => setShowPassword(prev => !prev)}
           class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          tabIndex={-1}
+          tabindex="-1"
         >
-          <Show when={showPassword()} fallback={<Eye size={16} />}>
-            <EyeOff size={16} />
-          </Show>
+          {showPassword() ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
       </div>
     </div>
   )
 }
+

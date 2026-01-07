@@ -1,4 +1,4 @@
-// src/client/components/base/OTPInput.tsx
+// src/react/client/components/base/OTPInput.tsx
 
 import { Input } from '@tanstack-app/ui'
 import { Label } from '@tanstack-app/ui'

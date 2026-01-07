@@ -1,3 +1,5 @@
+// src/react/client/providers/AuthConfigProvider.tsx
+
 /**
  * Auth Configuration Provider
  * Provides configuration context to all auth hooks and components

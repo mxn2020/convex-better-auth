@@ -1,13 +1,13 @@
-// packages/convex-better-auth/src/solid/client/components/base/LoadingButton.tsx
+// src/solid/client/components/base/LoadingButton.tsx
 
 /**
- * Button component with integrated loading state for Solid
+ * Button component with integrated loading state
  * Shows spinner when loading
  */
 
 import type { Component, JSX } from 'solid-js'
-import { Show } from 'solid-js'
-import { Loader2 } from 'lucide-solid'
+import { Show, splitProps } from 'solid-js'
+import Loader2 from 'lucide-solid/icons/loader-2'
 import { Button, type ButtonProps } from '@tanstack-app/ui/solid'
 
 export interface LoadingButtonProps extends ButtonProps {
@@ -16,39 +16,25 @@ export interface LoadingButtonProps extends ButtonProps {
 
   /** Text to show when loading (optional) */
   loadingText?: string
-
-  /** Button content */
-  children?: JSX.Element
 }
 
-/**
- * Button with loading state
- * Automatically shows spinner and disables when loading
- *
- * @example
- * ```tsx
- * <LoadingButton
- *   isLoading={loading()}
- *   loadingText="Signing in..."
- *   onClick={handleSubmit}
- * >
- *   Sign In
- * </LoadingButton>
- * ```
- */
 export const LoadingButton: Component<LoadingButtonProps> = (props) => {
+  const [local, buttonProps] = splitProps(props, [
+    'isLoading',
+    'loadingText',
+    'disabled',
+    'children',
+  ])
+
+  const isDisabled = () => local.disabled || local.isLoading
+
   return (
-    <Button disabled={props.disabled || props.isLoading} {...props}>
-      <Show
-        when={!props.isLoading}
-        fallback={
-          <>
-            <Loader2 size={16} class="animate-spin mr-2" />
-            {props.loadingText || props.children}
-          </>
-        }
-      >
-        {props.children}
+    <Button disabled={isDisabled()} {...buttonProps}>
+      <Show when={local.isLoading} fallback={local.children as JSX.Element}>
+        <span class="inline-flex items-center">
+          <Loader2 size={16} class="animate-spin mr-2" />
+          {local.loadingText ?? local.children}
+        </span>
       </Show>
     </Button>
   )

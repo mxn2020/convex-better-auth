@@ -1,3 +1,5 @@
+// src/solid/client/utils/validation.ts
+
 /**
  * Form validation schemas using Zod
  * Provides type-safe form validation for all auth forms
@@ -12,7 +14,7 @@ export const emailSchema = z.string().email('Invalid email address')
 
 /**
  * Password validation schema (basic)
- * For more complex validation, use usePasswordValidation hook
+ * For more complex validation, use usePasswordValidation composable
  */
 export const passwordSchema = z
   .string()

@@ -14,7 +14,7 @@ export * from './config'
 export * from './providers'
 
 // Hooks
-export * from './hooks'
+export * from './composables'
 
 // Components
 export * from './components'

@@ -1,3 +1,5 @@
+// src/react/client/hooks/utils/useAuthConfig.ts
+
 /**
  * Re-export of useAuthConfig for convenience
  * Allows importing from hooks/utils or directly from providers

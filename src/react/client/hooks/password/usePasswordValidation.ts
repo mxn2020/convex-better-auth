@@ -1,3 +1,5 @@
+// src/react/client/hooks/password/usePasswordValidation.ts
+
 /**
  * Hook for password validation
  * Provides password validation utilities based on configured requirements

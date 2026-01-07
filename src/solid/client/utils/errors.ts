@@ -1,3 +1,5 @@
+// src/solid/client/utils/errors.ts
+
 /**
  * Error handling utilities for auth operations
  */

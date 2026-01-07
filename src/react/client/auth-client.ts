@@ -1,3 +1,5 @@
+// src/react/client/auth-client.ts
+
 /**
  * Better Auth client for React applications
  * Includes all plugin clients for magic link, OTP, 2FA, anonymous, and Convex integration

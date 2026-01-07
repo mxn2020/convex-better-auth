@@ -1,3 +1,5 @@
+// src/react/client/hooks/password/usePasswordReset.ts
+
 /**
  * Hook for password reset flow
  * Handles requesting password reset and resetting password with token

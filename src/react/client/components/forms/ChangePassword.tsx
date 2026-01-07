@@ -1,4 +1,4 @@
-// packages/convex-better-auth/src/client/components/forms/ChangePassword.tsx
+// src/react/client/components/forms/ChangePassword.tsx
 
 /**
  * Change Password Page Component

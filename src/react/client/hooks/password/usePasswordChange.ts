@@ -1,3 +1,5 @@
+// src/react/client/hooks/password/usePasswordChange.ts
+
 /**
  * Hook for changing user password
  * Requires current password for security

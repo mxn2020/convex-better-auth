@@ -1,3 +1,5 @@
+// src/react/client/hooks/utils/useAuthError.ts
+
 /**
  * Centralized error handling hook for auth operations
  * Provides consistent error display using toast notifications
