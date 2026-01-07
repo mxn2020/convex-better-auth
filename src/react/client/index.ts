@@ -9,10 +9,10 @@
 export { authClient, type AuthClient } from './auth-client'
 
 // Base components (reusable primitives)
-export * from './components/base'
+export * from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/base'
 
 // Form components (complete auth flows)
-export * from './components/forms'
+export * from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/forms'
 
 // Utility components
 export { UserProfile, type UserProfileProps } from './components/UserProfile'

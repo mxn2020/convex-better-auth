@@ -1,10 +1,16 @@
 /**
  * Convex Better Auth Package
- * Reusable authentication package for Convex + Better Auth
  *
- * @packageDocumentation
+ * Main entry point for the authentication package.
+ * By default, exports React components for backward compatibility.
+ *
+ * For framework-specific imports, use:
+ * - '@convex-better-auth/package/react' for React components
+ * - '@convex-better-auth/package/solid' for Solid components
+ * - '@convex-better-auth/package/shared' for shared utilities
  */
 
-// Re-export everything from client
-export * from './client'
+// Re-export React components by default for backward compatibility
+export * from './react'
+export * from './shared'
 

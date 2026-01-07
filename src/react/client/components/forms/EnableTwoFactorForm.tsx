@@ -19,7 +19,7 @@ import {
   type TwoFactorPasswordFormData,
   type TwoFactorVerifyFormData,
 } from '../../utils/validation'
-import { FormField, LoadingButton } from '../base'
+import { FormField, LoadingButton } from '.pnpm/@convex-better-auth+package@file+packages+convex-better-auth_945c36af14c4851cd33c42cd59b794a1/node_modules/@convex-better-auth/package/client/base'
 
 export interface EnableTwoFactorFormProps {
   /** Callback when user clicks back button */

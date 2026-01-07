@@ -6,18 +6,21 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./client": "./src/client/index.ts",
-    "./client/base": "./src/client/components/base/index.ts",
-    "./client/forms": "./src/client/components/forms/index.ts",
+    "./react": "./src/react/index.ts",
+    "./react/client": "./src/react/client/index.ts",
+    "./react/client/base": "./src/react/client/components/base/index.ts",
+    "./react/client/forms": "./src/react/client/components/forms/index.ts",
+    "./solid": "./src/solid/index.ts",
+    "./solid/client": "./src/solid/client/index.ts",
+    "./solid/client/forms": "./src/solid/client/components/forms/index.ts",
+    "./solid/client/base": "./src/solid/client/components/base/index.ts",
     "./shared": "./src/shared/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
     "@tanstack-app/ui": "file:../ui",
-    "react-hook-form": "^7.70.0",
     "zod": "^4.3.5"
   },
   "peerDependencies": {
@@ -25,14 +28,36 @@
     "@convex-dev/resend": "^0.1.13",
     "@react-email/components": "0.5.0",
     "@tanstack/react-router": "^1.145.0",
+    "@tanstack/solid-router": "^1.145.0",
     "better-auth": "^1.4.10",
     "convex": "^1.31.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "solid-js": "^1.9.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "@tanstack/react-router": {
+      "optional": true
+    },
+    "solid-js": {
+      "optional": true
+    },
+    "@tanstack/solid-router": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "react-hook-form": "^7.70.0",
+    "solid-js": "^1.9.10",
     "typescript": "^5.9.3"
   },
   "keywords": [
