@@ -127,14 +127,14 @@ In your React app, import components from the package:
 
 ```typescript
 // Import form components
-import { SignIn, SignUp, Settings, ChangePassword } from '@convex-better-auth/package/client'
+import { SignIn, SignUp, Settings, ChangePassword } from '@convex-better-auth/package/react/client'
 
 // Or import from specific paths
-import { SignIn } from '@convex-better-auth/package/client/forms'
-import { PasswordInput, SocialButtons } from '@convex-better-auth/package/client/base'
+import { SignIn } from '@convex-better-auth/package/react/client/forms'
+import { PasswordInput, SocialButtons } from '@convex-better-auth/package/react/client/base'
 
 // Import auth client
-import { authClient } from '@convex-better-auth/package/client'
+import { authClient } from '@convex-better-auth/package/react/client'
 ```
 
 ## Component Usage
@@ -146,7 +146,7 @@ Base components are low-level, reusable UI elements:
 #### PasswordInput
 
 ```typescript
-import { PasswordInput } from '@convex-better-auth/package/client/base'
+import { PasswordInput } from '@convex-better-auth/package/react/client/base'
 
 <PasswordInput
   id="password"
@@ -161,7 +161,7 @@ import { PasswordInput } from '@convex-better-auth/package/client/base'
 #### SocialButtons
 
 ```typescript
-import { SocialButtons } from '@convex-better-auth/package/client/base'
+import { SocialButtons } from '@convex-better-auth/package/react/client/base'
 
 <SocialButtons
   onGithubClick={handleGithubSignIn}
@@ -173,7 +173,7 @@ import { SocialButtons } from '@convex-better-auth/package/client/base'
 #### OTPInput
 
 ```typescript
-import { OTPInput } from '@convex-better-auth/package/client/base'
+import { OTPInput } from '@convex-better-auth/package/react/client/base'
 
 <OTPInput
   id="otp"
@@ -193,7 +193,7 @@ Form components are complete, ready-to-use authentication flows:
 Multi-method sign-in with email/password, magic link, OTP, social, and anonymous options:
 
 ```typescript
-import { SignIn } from '@convex-better-auth/package/client'
+import { SignIn } from '@convex-better-auth/package/react/client'
 
 export default function SignInPage() {
   return <SignIn />
@@ -205,7 +205,7 @@ export default function SignInPage() {
 User registration with email verification support:
 
 ```typescript
-import { SignUp } from '@convex-better-auth/package/client'
+import { SignUp } from '@convex-better-auth/package/react/client'
 
 export default function SignUpPage() {
   return <SignUp />
@@ -217,7 +217,7 @@ export default function SignUpPage() {
 Comprehensive account settings page:
 
 ```typescript
-import { Settings } from '@convex-better-auth/package/client'
+import { Settings } from '@convex-better-auth/package/react/client'
 
 export default function SettingsPage() {
   return (
@@ -240,7 +240,7 @@ export default function SettingsPage() {
 #### ChangePassword
 
 ```typescript
-import { ChangePassword } from '@convex-better-auth/package/client'
+import { ChangePassword } from '@convex-better-auth/package/react/client'
 
 <ChangePassword
   passwordRequirements={{
@@ -297,7 +297,7 @@ socialProviders: {
 The `authClient` provides all Better Auth methods:
 
 ```typescript
-import { authClient } from '@convex-better-auth/package/client'
+import { authClient } from '@convex-better-auth/package/react/client'
 
 // Sign up
 await authClient.signUp.email({

@@ -37,6 +37,8 @@
   },
   "dependencies": {
     "@tanstack-app/ui": "file:../ui",
+    "lucide-solid": "^0.562.0",
+    "solid-sonner": "^0.2.8",
     "zod": "^4.3.5"
   },
   "peerDependencies": {
