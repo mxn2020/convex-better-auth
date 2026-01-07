@@ -40,6 +40,29 @@ git submodule add <repo-url> packages/convex-better-auth
 git submodule update --init --recursive
 ```
 
+### Install Required Peer Dependencies
+
+This package requires several peer dependencies that must be installed in your consuming project:
+
+#### For React Projects
+
+```bash
+pnpm add react-hook-form @hookform/resolvers zod lucide-react
+```
+
+#### For SolidJS Projects
+
+```bash
+pnpm add lucide-solid solid-qr-code solid-sonner
+```
+
+#### UI Components
+
+This package depends on `@tanstack-app/ui` which provides shadcn/ui-style components (Button, Input, Card, etc.). You have two options:
+
+1. **Use your own UI components**: Replace imports from `@tanstack-app/ui` with your own UI library
+2. **Copy the UI package**: If using the full monorepo, the UI package is already available at `packages/ui`
+
 ## Setup Guide
 
 ### Step 1: Copy Shared Files to Convex Backend
