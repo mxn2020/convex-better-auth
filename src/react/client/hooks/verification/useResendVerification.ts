@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback, useEffect } from 'react'
-import { toast } from 'sonner'
+import { toast } from 'solid-sonner'
 import { authClient } from '../../auth-client'
 import { useAuthConfig } from '../utils/useAuthConfig'
 import { useAuthError } from '../utils/useAuthError'

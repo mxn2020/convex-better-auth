@@ -354,7 +354,7 @@ const { data: session } = authClient.useSession()
 Required:
 
 ```env
-SITE_URL=http://localhost:3000
+SITE_URL=http://localhost:3022
 BETTER_AUTH_SECRET=your-secret-key
 RESEND_API_KEY=your-resend-api-key
 EMAIL_FROM=Your App <noreply@example.com>

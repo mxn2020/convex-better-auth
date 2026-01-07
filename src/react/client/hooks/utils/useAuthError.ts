@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback } from 'react'
-import { toast } from 'sonner'
+import { toast } from 'solid-sonner'
 import { useAuthConfig } from '../../providers/AuthConfigProvider'
 import { formatError, toError } from '../../utils/errors'
 

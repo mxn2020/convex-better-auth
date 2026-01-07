@@ -5,7 +5,7 @@
 
 import { useState, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
+import { toast } from 'solid-sonner'
 import { authClient } from '../../auth-client'
 import { useAuthConfig } from '../utils/useAuthConfig'
 import { useAuthError } from '../utils/useAuthError'
