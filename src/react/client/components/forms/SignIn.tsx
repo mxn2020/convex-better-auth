@@ -14,8 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@tanstack-app/ui'
-import { Link } from '@tanstack/solid-router'
-import { type Component } from 'solid-js'
+import { Link } from '@tanstack/react-router'
 import SignInForm from './SignInForm'
 
 /**
@@ -37,7 +36,7 @@ import SignInForm from './SignInForm'
  * })
  * ```
  */
-export const SignIn: Component = () => {
+export function SignIn() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -74,7 +73,7 @@ export const SignIn: Component = () => {
           Don't have an account?{' '}
           <Link
             to="/sign-up"
-            class="text-orange-400 hover:text-orange-500 dark:text-orange-300 dark:hover:text-orange-200 underline"
+            className="text-orange-400 hover:text-orange-500 dark:text-orange-300 dark:hover:text-orange-200 underline"
           >
             Sign up
           </Link>
