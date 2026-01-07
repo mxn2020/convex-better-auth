@@ -60,12 +60,12 @@ function SignInForm() {
 ```tsx
 import { authClient } from '@convex-better-auth/package'
 // or
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '@/lib/auth-client'
 ```
 
 **Solid:**
 ```tsx
-import { authClient } from '~/library/auth-client'
+import { authClient } from '@/library/auth-client'
 // Note: Uses 'better-auth/solid' in the client setup
 ```
 
@@ -135,7 +135,7 @@ return <Show when={error()}><div class="error">{error()}</div></Show>
 ```tsx
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { authClient } from '~/lib/auth-client'
+import { authClient } from '@/lib/auth-client'
 
 export function SignInForm() {
   const [loading, setLoading] = useState(false)
@@ -168,7 +168,7 @@ export function SignInForm() {
 ### Solid Version
 ```tsx
 import { createSignal, Show } from 'solid-js'
-import { authClient } from '~/library/auth-client'
+import { authClient } from '@/library/auth-client'
 
 export function SignInForm() {
   const [email, setEmail] = createSignal('')
