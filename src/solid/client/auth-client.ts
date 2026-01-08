@@ -10,6 +10,8 @@ import {
   magicLinkClient,
   emailOTPClient,
   anonymousClient,
+  usernameClient,
+  apiKeyClient,
 } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/solid'
 import { convexClient } from '@convex-dev/better-auth/client/plugins'
@@ -49,6 +51,8 @@ export const authClient = createAuthClient({
       },
       defaultRole: "visitor",
     }),
+    usernameClient(),
+    apiKeyClient(),
   ],
 })
 
