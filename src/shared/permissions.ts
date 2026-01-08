@@ -1,3 +1,5 @@
+// src/shared/permissions.ts
+
 import { createAccessControl } from "better-auth/plugins/access";
 import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
 
@@ -18,7 +20,9 @@ export const ROLES = {
   SUPERADMIN: 'superadmin' as const,
 } as const;
 
-type Role = (typeof ROLES)[keyof typeof ROLES];
+export type Role = (typeof ROLES)[keyof typeof ROLES];
+
+export const ADMIN_ROLES: Role[] = [ROLES.SUPERADMIN, ROLES.ADMIN, ROLES.STAFF];
 
 // Define ALL resources and their possible actions (features)
 const statement = {
@@ -28,6 +32,7 @@ const statement = {
   repository: ["read", "create", "update", "delete", "fork"],
   task: ["read", "create", "update", "delete", "assign", "complete"],
   content: ["read", "create", "update", "delete", "publish"],
+  apiKey: ["read", "create", "delete", "list"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -54,6 +59,7 @@ export const memberRole = ac.newRole( {
   repository: ["read", "create"],
   task: ["read", "create", "update"],
   content: ["read", "create"],
+  apiKey: ["read", "create", "delete"],
 });
 
 export const editorRole = ac.newRole({
@@ -70,6 +76,7 @@ export const staffRole = ac.newRole({
   user: [...(editorRole.statements.user || []), "ban"], // Staff can also ban?
   repository: ["read", "create", "update", "delete"],
   task: ["read", "create", "update", "delete", "assign"],
+  apiKey: ["read", "list"],
 });
 
 export const adminRole = ac.newRole({
@@ -77,15 +84,17 @@ export const adminRole = ac.newRole({
   ...adminAc.statements,   // Then add the Better-Auth admin powers
   content: ["read", "create", "update", "delete", "publish"],
   repository: [...staffRole.statements.repository, "fork"],
+  apiKey: ["read", "create", "delete", "list"],
 });
 
 export const superadminRole = ac.newRole({
-  user: [...defaultStatements.user], 
+  user: [...defaultStatements.user],
   session: [...defaultStatements.session],
   prompt: ["read", "create", "update", "delete", "execute"],
   repository: ["read", "create", "update", "delete", "fork"],
   task: ["read", "create", "update", "delete", "assign", "complete"],
   content: ["read", "create", "update", "delete", "publish"],
+  apiKey: ["read", "create", "delete", "list"],
 });
 
 
