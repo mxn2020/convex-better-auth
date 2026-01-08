@@ -48,9 +48,8 @@ export function useAuthError() {
       const message = customMessage || formatError(errorObj)
 
       // Show toast notification
-      toast.error(message, {
-        description: context ? `Failed to ${context}` : undefined,
-      })
+      const fullMessage = context ? `Failed to ${context}: ${message}` : message
+      toast.error(fullMessage)
 
       // Log to console in development
       if (process.env.NODE_ENV === 'development') {

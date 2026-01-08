@@ -23,7 +23,7 @@ import {
   applicantRole,
   memberRole,
   staffRole,
-} from "../../shared/permissions.ts";
+} from "../../shared/permissions";
 
 /**
  * Creates and exports the auth client with all plugins
