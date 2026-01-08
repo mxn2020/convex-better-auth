@@ -6,8 +6,8 @@
  * Layout is handled by parent component
  */
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Button } from '@tanstack-app/ui'
 import { Loader2 } from 'lucide-react'
 import { useSignIn } from '../../hooks/core/useSignIn'
@@ -21,6 +21,7 @@ import { useAuthConfig } from '../../hooks/utils/useAuthConfig'
 import { signInSchema, type SignInFormData } from '../../utils/validation'
 import { FormField, LoadingButton, MethodToggle } from '../base'
 import { SocialButtons } from '../base/SocialButtons'
+import { useState } from 'react'
 
 /**
  * Sign in form with all authentication logic
@@ -49,15 +50,23 @@ export default function SignInForm() {
   const googleAuth = useSocialAuth('google')
   const passwordReset = usePasswordReset()
 
-  const form = useForm<SignInFormData>({
-    resolver: zodResolver(signInSchema),
+  const [email, setEmail] = useState('')
+  const [otpCode, setOtpCode] = useState('')
+
+  const form = useForm({
     defaultValues: {
       email: '',
       password: '',
     },
+    onSubmit: async ({ value }) => {
+      if (selectedMethod === 'password') {
+        console.log('Submitting password sign-in for', value.email)
+        await signIn.signInWithPassword(value.email, value.password)
+      } else if (otp.otpSent) {
+        await otp.verifyOTP(value.email, otpCode)
+      }
+    },
   })
-
-  const email = form.watch('email')
 
   const isLoading =
     signIn.isLoading ||
@@ -69,14 +78,8 @@ export default function SignInForm() {
     passwordReset.isLoading
 
   // Auth handlers
-  const handlePasswordSignIn = form.handleSubmit(async (data) => {
-    console.log('Submitting password sign-in for', data.email)
-    await signIn.signInWithPassword(data.email, data.password)
-  })
-
   const handleMagicLink = async () => {
     if (!email) {
-      form.setError('email', { message: 'Email is required' })
       return
     }
     await magicLink.sendMagicLink(email)
@@ -84,20 +87,13 @@ export default function SignInForm() {
 
   const handleOTPSend = async () => {
     if (!email) {
-      form.setError('email', { message: 'Email is required' })
       return
     }
     await otp.sendOTP(email)
   }
 
-  const handleOTPVerify = async (code: string) => {
-    if (!email) return
-    await otp.verifyOTP(email, code)
-  }
-
   const handleForgotPassword = async () => {
     if (!email) {
-      form.setError('email', { message: 'Email is required' })
       return
     }
     await passwordReset.requestReset(email)
@@ -105,56 +101,65 @@ export default function SignInForm() {
 
   return (
     <form
-      onSubmit={
-        selectedMethod === 'password'
-          ? handlePasswordSignIn
-          : (e) => {
-            e.preventDefault()
-            if (otp.otpSent) {
-              const code = (e.target as HTMLFormElement).otp?.value
-              if (code) handleOTPVerify(code)
-            }
-          }
-      }
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
       className="grid gap-4"
     >
       {/* Email Field */}
-      <FormField
-        label="Email"
-        type="email"
-        placeholder="m@example.com"
-        disabled={isLoading}
-        {...form.register('email')}
-        error={form.formState.errors.email?.message}
-      />
+      <form.Field name="email">
+        {(field) => (
+          <FormField
+            label="Email"
+            type="email"
+            placeholder="m@example.com"
+            disabled={isLoading}
+            value={field.state.value}
+            onChange={(e) => {
+              field.handleChange(e.target.value)
+              setEmail(e.target.value)
+            }}
+            onBlur={field.handleBlur}
+            error={field.state.meta.errors?.[0] ? String(field.state.meta.errors?.[0]) : undefined}
+          />
+        )}
+      </form.Field>
 
       {/* Password Field */}
       {selectedMethod === 'password' && (
-        <FormField
-          id="password"
-          label="Password"
-          type="password"
-          placeholder="password"
-          autoComplete="password"
-          disabled={isLoading}
-          {...form.register('password')}
-          error={form.formState.errors.password?.message}
-          labelAction={
-            <Button
-              variant="link"
-              size="sm"
-              type="button"
-              onClick={handleForgotPassword}
-              className="cursor-pointer"
-              disabled={passwordReset.isLoading || !email}
-            >
-              {passwordReset.isLoading && (
-                <Loader2 size={14} className="animate-spin mr-1" />
-              )}
-              Forgot your password?
-            </Button>
-          }
-        />
+        <form.Field name="password">
+          {(field) => (
+            <FormField
+              id="password"
+              label="Password"
+              type="password"
+              placeholder="password"
+              autoComplete="password"
+              disabled={isLoading}
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              error={field.state.meta.errors?.[0] ? String(field.state.meta.errors?.[0]) : undefined}
+              labelAction={
+                <Button
+                  variant="link"
+                  size="sm"
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="cursor-pointer"
+                  disabled={passwordReset.isLoading || !email}
+                >
+                  {passwordReset.isLoading && (
+                    <Loader2 size={14} className="animate-spin mr-1" />
+                  )}
+                  Forgot your password?
+                </Button>
+              }
+            />
+          )}
+        </form.Field>
       )}
 
       {/* OTP Input */}
@@ -168,6 +173,8 @@ export default function SignInForm() {
           inputMode="numeric"
           maxLength={6}
           disabled={isLoading}
+          value={otpCode}
+          onChange={(e) => setOtpCode(e.target.value)}
         />
       )}
 

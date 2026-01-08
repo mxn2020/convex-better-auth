@@ -7,8 +7,8 @@
  */
 
 import { Button } from '@tanstack-app/ui'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Check, Copy } from 'lucide-react'
 import { useState } from 'react'
 import QRCode from 'react-qr-code'
@@ -65,14 +65,14 @@ export default function EnableTwoFactorForm({
   const [copied, setCopied] = useState(false)
 
   const passwordForm = useForm<TwoFactorPasswordFormData>({
-    resolver: zodResolver(twoFactorPasswordSchema),
+    resolver: zodValidator(twoFactorPasswordSchema),
     defaultValues: {
       password: '',
     },
   })
 
   const verifyForm = useForm<TwoFactorVerifyFormData>({
-    resolver: zodResolver(twoFactorVerifySchema),
+    resolver: zodValidator(twoFactorVerifySchema),
     defaultValues: {
       code: '',
     },

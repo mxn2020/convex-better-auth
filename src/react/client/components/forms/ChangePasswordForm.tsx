@@ -7,8 +7,8 @@
  */
 
 import { Checkbox, Label } from '@tanstack-app/ui'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { usePasswordChange } from '../../hooks/password/usePasswordChange'
 import { usePasswordValidation } from '../../hooks/password/usePasswordValidation'
@@ -65,7 +65,7 @@ export default function ChangePasswordForm({
     usePasswordValidation(passwordRequirements)
 
   const form = useForm<ChangePasswordFormData>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodValidator(changePasswordSchema),
     defaultValues: {
       currentPassword: '',
       newPassword: '',

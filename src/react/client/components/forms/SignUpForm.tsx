@@ -8,8 +8,8 @@
 
 import { Input } from '@tanstack-app/ui'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { X } from 'lucide-react'
 import { useSignUp } from '../../hooks/core/useSignUp'
 import { useSocialAuth } from '../../hooks/core/useSocialAuth'
@@ -37,7 +37,7 @@ export default function SignUpForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodValidator(signUpSchema),
     defaultValues: {
       firstName: '',
       lastName: '',

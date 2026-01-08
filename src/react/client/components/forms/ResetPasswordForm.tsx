@@ -6,8 +6,8 @@
  * Layout is handled by parent component
  */
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { useNavigate } from '@tanstack/react-router'
 import { usePasswordReset } from '../../hooks/password/usePasswordReset'
 import {
@@ -40,7 +40,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   })
 
   const form = useForm<PasswordResetFormData>({
-    resolver: zodResolver(passwordResetSchema),
+    resolver: zodValidator(passwordResetSchema),
     defaultValues: {
       token: token || '',
       newPassword: '',
