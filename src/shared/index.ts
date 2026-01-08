@@ -8,3 +8,5 @@ export * from './config'
 
 // Shared type definitions
 export * from './types'
+
+export * from './permissions'

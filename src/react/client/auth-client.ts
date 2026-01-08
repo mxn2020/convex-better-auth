@@ -13,6 +13,17 @@ import {
 } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
 import { convexClient } from '@convex-dev/better-auth/client/plugins'
+import { adminClient } from "better-auth/client/plugins"
+import {
+  ac,
+  superadminRole,
+  adminRole,
+  editorRole,
+  visitorRole,
+  applicantRole,
+  memberRole,
+  staffRole,
+} from "../../shared/permissions.ts";
 
 /**
  * Creates and exports the auth client with all plugins
@@ -39,6 +50,19 @@ export const authClient = createAuthClient({
     twoFactorClient(),
     anonymousClient(),
     convexClient(),
+    adminClient({
+      ac,  // Access controller
+      roles: {
+        superadmin: superadminRole,
+        admin: adminRole,
+        editor: editorRole,
+        visitor: visitorRole,
+        applicant: applicantRole,
+        member: memberRole,
+        staff: staffRole,
+      },
+      defaultRole: "visitor",
+    }),
   ],
 })
 
