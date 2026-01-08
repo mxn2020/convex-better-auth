@@ -1,6 +1,12 @@
 import { createAccessControl } from "better-auth/plugins/access";
 import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
 
+type MyStatements = typeof ac.statements;
+
+export type PermissionRequest = {
+  [K in keyof MyStatements]?: MyStatements[K][number][];
+};
+
 // Define roles as constants
 export const ROLES = {
   VISITOR: 'visitor' as const,
