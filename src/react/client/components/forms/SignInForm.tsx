@@ -7,7 +7,6 @@
  */
 
 import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Button } from '@tanstack-app/ui'
 import { Loader2 } from 'lucide-react'
 import { useSignIn } from '../../hooks/core/useSignIn'
@@ -18,7 +17,6 @@ import { useSocialAuth } from '../../hooks/core/useSocialAuth'
 import { usePasswordReset } from '../../hooks/password/usePasswordReset'
 import { useAuthMethod } from '../../hooks/utils/useAuthMethod'
 import { useAuthConfig } from '../../hooks/utils/useAuthConfig'
-import { signInSchema, type SignInFormData } from '../../utils/validation'
 import { FormField, LoadingButton, MethodToggle } from '../base'
 import { SocialButtons } from '../base/SocialButtons'
 import { useState } from 'react'

@@ -9,12 +9,10 @@
 import { Input } from '@tanstack-app/ui'
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
 import { X } from 'lucide-react'
 import { useSignUp } from '../../hooks/core/useSignUp'
 import { useSocialAuth } from '../../hooks/core/useSocialAuth'
 import { useAuthConfig } from '../../hooks/utils/useAuthConfig'
-import { signUpSchema, type SignUpFormData } from '../../utils/validation'
 import { FormField, LoadingButton } from '../base'
 import { SocialButtons } from '../base/SocialButtons'
 
@@ -36,14 +34,16 @@ export default function SignUpForm() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
-  const form = useForm<SignUpFormData>({
-    resolver: zodValidator(signUpSchema),
+  const form = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       password: '',
       image: '',
+    },
+    onSubmit: async ({ value }) => {
+      await signUp(value)
     },
   })
 
@@ -68,7 +68,7 @@ export default function SignUpForm() {
       // Convert to base64 for form
       try {
         const base64 = await uploadImage(file)
-        form.setValue('image', base64)
+        form.setFieldValue('image', base64)
       } catch (error) {
         // Error handled by hook
       }
@@ -78,16 +78,18 @@ export default function SignUpForm() {
   const handleRemoveImage = () => {
     setImageFile(null)
     setImagePreview(null)
-    form.setValue('image', '')
+    form.setFieldValue('image', '')
   }
 
-  // Auth handler
-  const onSubmit = form.handleSubmit(async (data) => {
-    await signUp(data)
-  })
-
   return (
-    <form onSubmit={onSubmit} className="grid gap-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
+      className="grid gap-4"
+    >
       {/* Social Sign Up */}
       {(isMethodEnabled('github') || isMethodEnabled('google')) && (
         <>
@@ -114,42 +116,66 @@ export default function SignUpForm() {
 
       {/* Name Fields */}
       <div className="grid grid-cols-2 gap-4">
-        <FormField
-          label="First name"
-          placeholder="Max"
-          disabled={isAnyLoading}
-          {...form.register('firstName')}
-          error={form.formState.errors.firstName?.message}
-        />
-        <FormField
-          label="Last name"
-          placeholder="Robinson"
-          disabled={isAnyLoading}
-          {...form.register('lastName')}
-          error={form.formState.errors.lastName?.message}
-        />
+        <form.Field name="firstName">
+          {(field) => (
+            <FormField
+              label="First name"
+              placeholder="Max"
+              disabled={isAnyLoading}
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+            />
+          )}
+        </form.Field>
+        <form.Field name="lastName">
+          {(field) => (
+            <FormField
+              label="Last name"
+              placeholder="Robinson"
+              disabled={isAnyLoading}
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+              error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+            />
+          )}
+        </form.Field>
       </div>
 
       {/* Email Field */}
-      <FormField
-        label="Email"
-        type="email"
-        placeholder="m@example.com"
-        disabled={isAnyLoading}
-        {...form.register('email')}
-        error={form.formState.errors.email?.message}
-      />
+      <form.Field name="email">
+        {(field) => (
+          <FormField
+            label="Email"
+            type="email"
+            placeholder="m@example.com"
+            disabled={isAnyLoading}
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            onBlur={field.handleBlur}
+            error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+          />
+        )}
+      </form.Field>
 
       {/* Password Field */}
-      <FormField
-        label="Password"
-        type="password"
-        placeholder="Enter your password"
-        autoComplete="new-password"
-        disabled={isAnyLoading}
-        {...form.register('password')}
-        error={form.formState.errors.password?.message}
-      />
+      <form.Field name="password">
+        {(field) => (
+          <FormField
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            autoComplete="new-password"
+            disabled={isAnyLoading}
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            onBlur={field.handleBlur}
+            error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+          />
+        )}
+      </form.Field>
 
       {/* Profile Image */}
       {showProfileImage && (

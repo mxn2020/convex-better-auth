@@ -7,13 +7,8 @@
  */
 
 import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
 import { useNavigate } from '@tanstack/react-router'
 import { usePasswordReset } from '../../hooks/password/usePasswordReset'
-import {
-  passwordResetSchema,
-  type PasswordResetFormData,
-} from '../../utils/validation'
 import { FormField, LoadingButton } from '../base'
 
 export interface ResetPasswordFormProps {
@@ -39,41 +34,57 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     },
   })
 
-  const form = useForm<PasswordResetFormData>({
-    resolver: zodValidator(passwordResetSchema),
+  const form = useForm({
     defaultValues: {
       token: token || '',
       newPassword: '',
       confirmPassword: '',
     },
-  })
-
-  // Auth handler
-  const onSubmit = form.handleSubmit(async (data) => {
-    await resetPassword(data.token, data.newPassword)
+    onSubmit: async ({ value }) => {
+      await resetPassword(value.token, value.newPassword)
+    },
   })
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
+      className="grid gap-4"
+    >
       {/* New Password Field */}
-      <FormField
-        label="New Password"
-        type="password"
-        placeholder="Enter your new password"
-        disabled={isLoading}
-        {...form.register('newPassword')}
-        error={form.formState.errors.newPassword?.message}
-      />
+      <form.Field name="newPassword">
+        {(field) => (
+          <FormField
+            label="New Password"
+            type="password"
+            placeholder="Enter your new password"
+            disabled={isLoading}
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            onBlur={field.handleBlur}
+            error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+          />
+        )}
+      </form.Field>
 
       {/* Confirm Password Field */}
-      <FormField
-        label="Confirm Password"
-        type="password"
-        placeholder="Confirm your new password"
-        disabled={isLoading}
-        {...form.register('confirmPassword')}
-        error={form.formState.errors.confirmPassword?.message}
-      />
+      <form.Field name="confirmPassword">
+        {(field) => (
+          <FormField
+            label="Confirm Password"
+            type="password"
+            placeholder="Confirm your new password"
+            disabled={isLoading}
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
+            onBlur={field.handleBlur}
+            error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+          />
+        )}
+      </form.Field>
 
       {/* Submit Button */}
       <LoadingButton type="submit" className="w-full" isLoading={isLoading}>

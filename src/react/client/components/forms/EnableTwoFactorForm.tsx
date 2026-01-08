@@ -8,17 +8,10 @@
 
 import { Button } from '@tanstack-app/ui'
 import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Check, Copy } from 'lucide-react'
 import { useState } from 'react'
 import QRCode from 'react-qr-code'
 import { useTwoFactorEnable } from '../../hooks/twoFactor/useTwoFactorEnable'
-import {
-  twoFactorPasswordSchema,
-  twoFactorVerifySchema,
-  type TwoFactorPasswordFormData,
-  type TwoFactorVerifyFormData,
-} from '../../utils/validation'
 import { FormField, LoadingButton } from '../base'
 
 export interface EnableTwoFactorFormProps {
@@ -64,27 +57,22 @@ export default function EnableTwoFactorForm({
 
   const [copied, setCopied] = useState(false)
 
-  const passwordForm = useForm<TwoFactorPasswordFormData>({
-    resolver: zodValidator(twoFactorPasswordSchema),
+  const passwordForm = useForm({
     defaultValues: {
       password: '',
     },
-  })
-
-  const verifyForm = useForm<TwoFactorVerifyFormData>({
-    resolver: zodValidator(twoFactorVerifySchema),
-    defaultValues: {
-      code: '',
+    onSubmit: async ({ value }) => {
+      await enableTwoFactor(value.password)
     },
   })
 
-  // Auth handlers
-  const onPasswordSubmit = passwordForm.handleSubmit(async (data) => {
-    await enableTwoFactor(data.password)
-  })
-
-  const onVerifySubmit = verifyForm.handleSubmit(async (data) => {
-    await verifySetup(data.code)
+  const verifyForm = useForm({
+    defaultValues: {
+      code: '',
+    },
+    onSubmit: async ({ value }) => {
+      await verifySetup(value.code)
+    },
   })
 
   const copyBackupCodes = async () => {
@@ -115,20 +103,33 @@ export default function EnableTwoFactorForm({
 
       {/* Step 1: Password Verification */}
       {step === 'password' && (
-        <form onSubmit={onPasswordSubmit} className="grid gap-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            passwordForm.handleSubmit()
+          }}
+          className="grid gap-4"
+        >
           <p className="text-sm text-muted-foreground">
             Enter your password to begin the two-factor authentication setup
             process.
           </p>
 
-          <FormField
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            disabled={isLoading}
-            {...passwordForm.register('password')}
-            error={passwordForm.formState.errors.password?.message}
-          />
+          <passwordForm.Field name="password">
+            {(field) => (
+              <FormField
+                label="Password"
+                type="password"
+                placeholder="Enter your password"
+                disabled={isLoading}
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+              />
+            )}
+          </passwordForm.Field>
 
           <LoadingButton
             type="submit"
@@ -157,18 +158,31 @@ export default function EnableTwoFactorForm({
           </div>
 
           {/* Verification Form */}
-          <form onSubmit={onVerifySubmit} className="grid gap-4">
-            <FormField
-              label="Verification Code"
-              type="text"
-              placeholder="Enter 6-digit code"
-              pattern="[0-9]*"
-              inputMode="numeric"
-              maxLength={6}
-              disabled={isLoading}
-              {...verifyForm.register('code')}
-              error={verifyForm.formState.errors.code?.message}
-            />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              verifyForm.handleSubmit()
+            }}
+            className="grid gap-4"
+          >
+            <verifyForm.Field name="code">
+              {(field) => (
+                <FormField
+                  label="Verification Code"
+                  type="text"
+                  placeholder="Enter 6-digit code"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  maxLength={6}
+                  disabled={isLoading}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  error={field.state.meta.errors?.[0] ? String(field.state.meta.errors[0]) : undefined}
+                />
+              )}
+            </verifyForm.Field>
 
             <LoadingButton
               type="submit"

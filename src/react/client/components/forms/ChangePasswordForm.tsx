@@ -8,17 +8,13 @@
 
 import { Checkbox, Label } from '@tanstack-app/ui'
 import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { usePasswordChange } from '../../hooks/password/usePasswordChange'
 import { usePasswordValidation } from '../../hooks/password/usePasswordValidation'
-import {
-  changePasswordSchema,
-  type ChangePasswordFormData,
-} from '../../utils/validation'
 import { PasswordInput } from '../base/PasswordInput'
 import { LoadingButton } from '../base'
 import type { PasswordRequirements } from '../../../../shared/config'
+import { useState } from 'react'
 
 export interface ChangePasswordFormProps {
   /** Password requirements for validation */
@@ -64,18 +60,31 @@ export default function ChangePasswordForm({
   const { validate, getRequirementsList } =
     usePasswordValidation(passwordRequirements)
 
-  const form = useForm<ChangePasswordFormData>({
-    resolver: zodValidator(changePasswordSchema),
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+
+  const form = useForm({
     defaultValues: {
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
       revokeOtherSessions: false,
     },
-  })
+    onSubmit: async ({ value }) => {
+      await changePassword(
+        value.currentPassword,
+        value.newPassword,
+        value.revokeOtherSessions
+      )
 
-  const newPassword = form.watch('newPassword')
-  const confirmPassword = form.watch('confirmPassword')
+      // Clear form on success
+      if (success) {
+        form.reset()
+        setNewPassword('')
+        setConfirmPassword('')
+      }
+    },
+  })
 
   // Validate password with custom requirements
   const validation = passwordRequirements
@@ -85,47 +94,53 @@ export default function ChangePasswordForm({
   const passwordsMatch = newPassword === confirmPassword
   const requirements = passwordRequirements ? getRequirementsList() : []
 
-  // Auth handler
-  const onSubmit = form.handleSubmit(async (data) => {
-    await changePassword(
-      data.currentPassword,
-      data.newPassword,
-      data.revokeOtherSessions
-    )
-
-    // Clear form on success
-    if (success) {
-      form.reset()
-    }
-  })
-
   return (
-    <form onSubmit={onSubmit} className="grid gap-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
+      className="grid gap-4"
+    >
       {/* Current Password Field */}
-      <div className="grid gap-2">
-        <Label htmlFor="current-password">Current Password</Label>
-        <PasswordInput
-          id="current-password"
-          placeholder="Enter current password"
-          disabled={isLoading}
-          {...form.register('currentPassword')}
-        />
-        {form.formState.errors.currentPassword && (
-          <p className="text-xs text-red-600">
-            {form.formState.errors.currentPassword.message}
-          </p>
+      <form.Field name="currentPassword">
+        {(field) => (
+          <div className="grid gap-2">
+            <Label htmlFor="current-password">Current Password</Label>
+            <PasswordInput
+              id="current-password"
+              placeholder="Enter current password"
+              disabled={isLoading}
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+            />
+            {field.state.meta.errors?.[0] && (
+              <p className="text-xs text-red-600">
+                {String(field.state.meta.errors[0])}
+              </p>
+            )}
+          </div>
         )}
-      </div>
+      </form.Field>
 
       {/* New Password Field */}
-      <div className="grid gap-2">
-        <Label htmlFor="new-password">New Password</Label>
-        <PasswordInput
-          id="new-password"
-          placeholder="Enter new password"
-          disabled={isLoading}
-          {...form.register('newPassword')}
-        />
+      <form.Field name="newPassword">
+        {(field) => (
+          <div className="grid gap-2">
+            <Label htmlFor="new-password">New Password</Label>
+            <PasswordInput
+              id="new-password"
+              placeholder="Enter new password"
+              disabled={isLoading}
+              value={field.state.value}
+              onChange={(e) => {
+                field.handleChange(e.target.value)
+                setNewPassword(e.target.value)
+              }}
+              onBlur={field.handleBlur}
+            />
 
         {/* Password Requirements */}
         {passwordRequirements && newPassword && (
@@ -175,69 +190,82 @@ export default function ChangePasswordForm({
           </div>
         )}
 
-        {form.formState.errors.newPassword && (
-          <p className="text-xs text-red-600">
-            {form.formState.errors.newPassword.message}
-          </p>
-        )}
-      </div>
-
-      {/* Confirm Password Field */}
-      <div className="grid gap-2">
-        <Label htmlFor="confirm-password">Confirm New Password</Label>
-        <PasswordInput
-          id="confirm-password"
-          placeholder="Confirm new password"
-          disabled={isLoading}
-          {...form.register('confirmPassword')}
-        />
-
-        {/* Password Match Indicator */}
-        {confirmPassword && (
-          <div className="flex items-center gap-2 text-xs">
-            {passwordsMatch ? (
-              <>
-                <CheckCircle2 size={14} className="text-green-600" />
-                <span className="text-green-700 dark:text-green-500">
-                  Passwords match
-                </span>
-              </>
-            ) : (
-              <>
-                <XCircle size={14} className="text-red-600" />
-                <span className="text-red-700 dark:text-red-500">
-                  Passwords do not match
-                </span>
-              </>
+            {field.state.meta.errors?.[0] && (
+              <p className="text-xs text-red-600">
+                {String(field.state.meta.errors[0])}
+              </p>
             )}
           </div>
         )}
+      </form.Field>
 
-        {form.formState.errors.confirmPassword && (
-          <p className="text-xs text-red-600">
-            {form.formState.errors.confirmPassword.message}
-          </p>
+      {/* Confirm Password Field */}
+      <form.Field name="confirmPassword">
+        {(field) => (
+          <div className="grid gap-2">
+            <Label htmlFor="confirm-password">Confirm New Password</Label>
+            <PasswordInput
+              id="confirm-password"
+              placeholder="Confirm new password"
+              disabled={isLoading}
+              value={field.state.value}
+              onChange={(e) => {
+                field.handleChange(e.target.value)
+                setConfirmPassword(e.target.value)
+              }}
+              onBlur={field.handleBlur}
+            />
+
+            {/* Password Match Indicator */}
+            {confirmPassword && (
+              <div className="flex items-center gap-2 text-xs">
+                {passwordsMatch ? (
+                  <>
+                    <CheckCircle2 size={14} className="text-green-600" />
+                    <span className="text-green-700 dark:text-green-500">
+                      Passwords match
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <XCircle size={14} className="text-red-600" />
+                    <span className="text-red-700 dark:text-red-500">
+                      Passwords do not match
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+
+            {field.state.meta.errors?.[0] && (
+              <p className="text-xs text-red-600">
+                {String(field.state.meta.errors[0])}
+              </p>
+            )}
+          </div>
         )}
-      </div>
+      </form.Field>
 
       {/* Revoke Other Sessions Option */}
       {showRevokeSessionsOption && (
-        <div className="flex items-center space-x-2 pt-2">
-          <Checkbox
-            id="revoke-sessions"
-            checked={form.watch('revokeOtherSessions')}
-            onChange={(checked) =>
-              form.setValue('revokeOtherSessions', checked)
-            }
-            disabled={isLoading}
-          />
-          <Label
-            htmlFor="revoke-sessions"
-            className="text-sm font-normal cursor-pointer"
-          >
-            Sign out all other devices
-          </Label>
-        </div>
+        <form.Field name="revokeOtherSessions">
+          {(field) => (
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox
+                id="revoke-sessions"
+                checked={field.state.value}
+                onChange={(checked) => field.handleChange(checked)}
+                disabled={isLoading}
+              />
+              <Label
+                htmlFor="revoke-sessions"
+                className="text-sm font-normal cursor-pointer"
+              >
+                Sign out all other devices
+              </Label>
+            </div>
+          )}
+        </form.Field>
       )}
 
       {/* Submit Button */}
