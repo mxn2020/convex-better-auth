@@ -38,17 +38,17 @@
   "dependencies": {
     "@tanstack/solid-form": "^1.27.7",
     "@tanstack/zod-form-adapter": "^0.42.1",
-    "zod": "^4.3.5"
+    "zod": "^3.23.8"
   },
   "peerDependencies": {
     "@convex-dev/better-auth": "^0.10.9",
-    "@convex-dev/resend": "^0.1.13",
+    "@convex-dev/resend": "^0.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@react-email/components": "0.5.0",
     "@tanstack-app/ui": "*",
     "@tanstack/react-router": "^1.145.0",
     "@tanstack/solid-router": "^1.145.0",
-    "better-auth": "^1.4.10",
+    "better-auth": "^1.4.9",
     "convex": "^1.31.2",
     "lucide-react": "^0.500.0",
     "lucide-solid": "^0.500.0",
@@ -99,12 +99,13 @@
   },
   "devDependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@tanstack-app/ui": "file:../ui",
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^8.6.14",
     "@storybook/react": "^8.6.14",
     "@storybook/react-vite": "^8.6.14",
+    "@tanstack-app/ui": "file:../ui",
+    "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.23",
@@ -114,6 +115,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.70.0",
+    "react-qr-code": "^2.0.18",
     "solid-js": "^1.9.10",
     "solid-qr-code": "^0.1.11",
     "solid-sonner": "^0.2.8",
