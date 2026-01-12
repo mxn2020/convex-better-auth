@@ -16,6 +16,7 @@ import {
 import { createAuthClient } from 'better-auth/react'
 import { convexClient } from '@convex-dev/better-auth/client/plugins'
 import { adminClient } from "better-auth/client/plugins"
+import { oauthProviderClient } from '@better-auth/oauth-provider/client'
 import {
   ac,
   superadminRole,
@@ -67,6 +68,7 @@ export const authClient = createAuthClient({
     }),
     usernameClient(),
     apiKeyClient(),
+    oauthProviderClient(),
   ],
 })
 
