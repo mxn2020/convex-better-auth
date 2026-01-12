@@ -2,15 +2,17 @@
 
 /**
  * Type definitions for OAuth 2.1 Provider plugin client methods
+ * These types are inferred from Better Auth OAuth Provider plugin
  */
 
 export interface OAuthClient {
-  clientId: string
+  clientId?: string
   clientSecret?: string
-  name: string
+  client_name?: string
+  name?: string
   redirectUris?: string[]
   redirect_uris?: string[]
-  type?: 'confidential' | 'public'
+  type?: 'confidential' | 'public' | 'web' | 'native' | 'spa'
   skipConsent?: boolean
   skip_consent?: boolean
   enableEndSession?: boolean
@@ -19,29 +21,34 @@ export interface OAuthClient {
   client_secret_expires_at?: number
   createdAt?: string
   updatedAt?: string
+  [key: string]: any // Allow additional properties from Better Auth
 }
 
 export interface OAuthConsentData {
   accept: boolean
-  scope?: string[]
+  scope?: string
 }
 
 export interface OAuthConsentResponse {
-  redirectURI?: string
-  redirect?: string
+  redirect: boolean
+  uri: string
 }
 
+/**
+ * OAuth2 methods exposed by the oauthProviderClient plugin
+ * Note: These are generated dynamically by Better Auth
+ */
 export interface OAuth2Methods {
   /**
    * Get all OAuth clients for the current user
    */
   getClients: (data: Record<string, never>) => Promise<{
     data: OAuthClient[] | null
-    error: { message: string; redirect?: string } | null
+    error: { message: string } | null
   }>
 
   /**
-   * Get a specific OAuth client by ID
+   * Get a specific OAuth client by ID (requires authentication)
    */
   getClient: (data: { client_id: string }) => Promise<{
     data: OAuthClient | null
@@ -51,7 +58,7 @@ export interface OAuth2Methods {
   /**
    * Get public client information (no authentication required)
    */
-  getPublicClient: (data: { clientId: string }) => Promise<{
+  publicClient: (query: { query: { client_id: string } }) => Promise<{
     data: OAuthClient | null
     error: { message: string } | null
   }>
@@ -60,11 +67,13 @@ export interface OAuth2Methods {
    * Create a new OAuth client
    */
   createClient: (data: {
-    name: string
+    client_name?: string
     redirect_uris: string[]
-    type?: 'confidential' | 'public'
+    type?: 'web' | 'native' | 'spa'
+    scope?: string
+    [key: string]: any
   }) => Promise<{
-    data: OAuthClient | null
+    data: (OAuthClient & { clientSecret: string }) | null
     error: { message: string } | null
   }>
 
@@ -73,7 +82,7 @@ export interface OAuth2Methods {
    */
   updateClient: (data: {
     client_id: string
-    name?: string
+    client_name?: string
     redirect_uris?: string[]
   }) => Promise<{
     data: OAuthClient | null
@@ -93,21 +102,6 @@ export interface OAuth2Methods {
    */
   consent: (data: OAuthConsentData) => Promise<{
     data: OAuthConsentResponse | null
-    error: { message: string; redirect?: string } | null
-  }>
-
-  /**
-   * Admin: Create a trusted OAuth client with special privileges
-   */
-  adminCreateClient: (data: {
-    name: string
-    redirect_uris: string[]
-    skip_consent?: boolean
-    enable_end_session?: boolean
-    client_secret_expires_at?: number
-    type?: 'confidential' | 'public'
-  }) => Promise<{
-    data: OAuthClient | null
-    error: { message: string } | null
+    error: { message: string; code?: string; status: number; statusText: string } | null
   }>
 }
