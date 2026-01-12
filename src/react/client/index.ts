@@ -35,3 +35,11 @@ export type {
   TwoFactorStatus,
   PasswordStrength,
 } from '../../shared/types'
+
+// Re-export OAuth types for convenience
+export type {
+  OAuth2Methods,
+  OAuthClient,
+  OAuthConsentData,
+  OAuthConsentResponse,
+} from './types/oauth'

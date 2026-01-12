@@ -75,4 +75,8 @@ export const authClient = createAuthClient({
 /**
  * Export type for the auth client
  */
-export type AuthClient = typeof authClient
+import type { OAuth2Methods } from './types/oauth'
+
+export type AuthClient = typeof authClient & {
+  oauth2: OAuth2Methods
+}
