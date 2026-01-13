@@ -1,6 +1,6 @@
 {
   "name": "@convex-better-auth/package",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Reusable Better Auth + Convex authentication package with email & password features",
   "type": "module",
   "main": "./src/index.ts",
