@@ -35,8 +35,10 @@ const getEnv = (key: string): string => {
   // This function is called during module load, so we need to be safe for Convex backend analysis
   try {
     // Vite environment (browser/client)
-    if (typeof import.meta !== 'undefined' && import.meta.env?.[key]) {
-      return import.meta.env[key];
+    // Use type assertion because import.meta.env types may not be available in consuming apps
+    const importMeta = import.meta as any;
+    if (typeof import.meta !== 'undefined' && importMeta?.env?.[key]) {
+      return importMeta.env[key];
     }
   } catch (e) {
     // import.meta not supported in this environment (e.g., Convex backend)
