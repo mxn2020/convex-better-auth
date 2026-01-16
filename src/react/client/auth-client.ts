@@ -31,11 +31,25 @@ import {
 
 
 const getEnv = (key: string): string => {
-  const value = (typeof import.meta !== 'undefined' ? import.meta.env?.[key] : undefined) || process.env[key]
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`)
+  // Try to access environment variables safely
+  // This function is called during module load, so we need to be safe for Convex backend analysis
+  try {
+    // Vite environment (browser/client)
+    if (typeof import.meta !== 'undefined' && import.meta.env?.[key]) {
+      return import.meta.env[key];
+    }
+  } catch (e) {
+    // import.meta not supported in this environment (e.g., Convex backend)
   }
-  return value
+
+  // Node.js environment
+  if (typeof process !== 'undefined' && process.env?.[key]) {
+    return process.env[key];
+  }
+
+  // Fallback - return empty string to avoid errors during Convex deployment analysis
+  // The actual value will be available when running in the browser
+  return '';
 }
 
 /**
