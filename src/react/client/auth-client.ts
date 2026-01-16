@@ -28,6 +28,15 @@ import {
   staffRole,
 } from "../../shared/permissions";
 
+
+const getEnv = (key: string): string => {
+  const value = (typeof import.meta !== 'undefined' ? import.meta.env?.[key] : undefined) || process.env[key]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`)
+  }
+  return value
+}
+
 /**
  * Creates and exports the auth client with all plugins
  * This client can be used throughout your React application for authentication
@@ -47,6 +56,7 @@ import {
  * ```
  */
 export const authClient = createAuthClient({
+  baseURL: getEnv('VITE_CONVEX_SITE_URL'), // || 'https://tacit-mink-132.convex.site',
   plugins: [
     magicLinkClient(),
     emailOTPClient(),
