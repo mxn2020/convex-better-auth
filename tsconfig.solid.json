@@ -9,7 +9,8 @@
   },
   "include": [
     "src/solid/**/*",
-    "src/shared/**/*"
+    "src/shared/**/*",
+    "vite-env.d.ts"
   ],
   "exclude": ["node_modules", "dist", "**/node_modules/**", "**/.pnpm/**"]
 }
